@@ -9,5 +9,5 @@
 
 [build.environment]
   NODE_VERSION = "20"
-  VITE_API_URL = "https://nyayamitra-api.onrender.com"
+  VITE_API_URL = "https://nyayamitra-backend-9vg3.onrender.com"
   NPM_FLAGS = "--legacy-peer-deps"
