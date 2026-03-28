@@ -34,8 +34,9 @@ async def send_otp(req: SendOTPRequest):
 
 @router.post("/verify-otp", response_model=AuthResponse)
 async def verify_otp(req: VerifyOTPRequest, db: AsyncSession = Depends(get_db)):
+    # Verify OTP (Master bypass for demo: 123456)
     if req.otp != "123456":
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid OTP")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid OTP. Use 123456 for demo.")
         
     # Check if user exists
     # For demo, using unhashed phone directly for simplicity
