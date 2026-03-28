@@ -1,29 +1,12 @@
 # NyayaMitra 🇮🇳⚖️
 ### AI-Powered Legal Justice for Every Indian
 
-> **Hacksagon 2026 | Team Return 0;**  
-> *600M+ citizens. Zero legal access. NyayaMitra changes that.*
+> **NyayaMitra** is a high-performance, AI-driven legal assistance platform designed to provide instant, accurate, and accessible legal guidance to 1.4 billion Indian citizens. Built with a 3D glassmorphism UI and a robust RAG (Retrieval-Augmented Generation) backend.
 
-[![Deploy Backend](https://img.shields.io/badge/Deploy-Railway-purple)](https://railway.app)
-[![Deploy Frontend](https://img.shields.io/badge/Deploy-Vercel-black)](https://vercel.com)
+[![Deploy Backend (Render)](https://img.shields.io/badge/Deploy-Render-blue)](https://render.com)
+[![Deploy Frontend (Netlify)](https://img.shields.io/badge/Deploy-Netlify-00C7B7)](https://netlify.com)
+[![Mobile App (Flutter)](https://img.shields.io/badge/App-Flutter-02569B)](https://flutter.dev)
 [![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
-
----
-
-## 🚀 Quick Start (Local Dev — No API Keys Needed)
-
-```bash
-# 1. Clone & install frontend
-cd frontend && npm install && npm run dev
-# → http://localhost:5173
-
-# 2. Install backend deps & start
-cd backend && pip install -r requirements.txt
-python run.py
-# → http://localhost:8000 | Swagger: http://localhost:8000/docs
-```
-
-The app works in **full demo mode** without any API keys. Add keys to `backend/.env` to enable AI features.
 
 ---
 
@@ -31,188 +14,71 @@ The app works in **full demo mode** without any API keys. Add keys to `backend/.
 
 | Pillar | Feature | Status |
 |--------|---------|--------|
-| 🎤 **Voice Counsellor** | RAG + Groq LLM in 6 Indian languages | ✅ Live |
-| 🔍 **Document Decoder** | AI clause risk analysis + counter-clauses | ✅ Live |
-| 📄 **Document Generator** | 47 legal doc types, PDF download | ✅ Live |
-| 📡 **Amendment Tracker** | Live Gazette scraper + IPC→BNS mapping | ✅ Live |
-| ⚖️ **Case Tracker** | Timeline + limitation periods + eCourts | ✅ Live |
-| 📊 **NyayaScore** | Legal health metric across 5 domains | ✅ Live |
-| 🤝 **Negotiation Coach** | 6 AI role-play scenarios + debrief | ✅ Live |
+| 🎤 **Voice Counsellor** | RAG + Groq LLM in 6 Indian languages (Hindi, Marathi, Tamil, etc.) | ✅ Live |
+| 🔍 **Document Decoder** | AI clause-by-clause risk analysis + counter-clause generation | ✅ Live |
+| 📄 **Document Generator** | Draft 47 legal document types (Notices, Affidavits) in seconds | ✅ Live |
+| 📡 **Amendment Tracker** | Live Indian Gazette scraper + Automatic IPC→BNS section mapping | ✅ Live |
+| ⚖️ **Case Tracker** | Smart timeline tracking + limitation period calculator | ✅ Live |
+| 📊 **NyayaScore** | Unified legal health metric based on documentation & compliance | ✅ Live |
+| 🤝 **Negotiation Coach** | AI role-play scenarios for out-of-court settlements | ✅ Live |
 
 ---
 
-## 🔑 API Keys (All Free Tier Available)
+## 🔑 Project Structure (Single Repo)
 
-Add to `backend/.env`:
-
-| Key | Get it at | Required for |
-|-----|-----------|-------------|
-| `GROQ_API_KEY` | [console.groq.com](https://console.groq.com) | AI answers (Llama 3.3 70B) |
-| `SARVAM_API_KEY` | [sarvam.ai](https://sarvam.ai) | Indian voice STT/TTS |
-| `OPENAI_API_KEY` | [platform.openai.com](https://platform.openai.com) | Vector embeddings |
-
----
-
-## 📦 Project Structure
+This is a monolithic repository containing the entire NyayaMitra ecosystem:
 
 ```
-NYAYAMITRA/
-├── frontend/                   # React 18 + TypeScript + Tailwind
-│   ├── src/pages/              # 7 feature pages
-│   ├── src/utils/api.ts        # TypeScript API client  
-│   ├── vercel.json             # Vercel deploy config
-│   └── Dockerfile.frontend     # Nginx production container
-│
-├── backend/                    # FastAPI + Python
-│   ├── app/main.py             # FastAPI app (38 routes)
-│   ├── app/api/routes/         # 8 route modules
-│   │   ├── counsellor.py       # Voice Counsellor + RAG
-│   │   ├── decoder.py          # Document Decoder
-│   │   ├── documents.py        # Document Generator (47 types)
-│   │   ├── amendments.py       # Amendment Tracker
-│   │   ├── cases.py            # Case Tracker
-│   │   ├── negotiate.py        # Negotiation Coach (6 scenarios)
-│   │   ├── score.py            # NyayaScore
-│   │   └── health.py           # Health check + RAG seed
-│   ├── app/rag/legal_brain.py  # RAG pipeline (ChromaDB + Groq)
-│   ├── app/services/           # Voice, Document, Amendment services
-│   ├── Dockerfile              # Multi-stage Python container
-│   ├── railway.toml            # Railway deploy config
-│   └── requirements.txt
-│
-├── docker-compose.yml          # Full stack local Docker
-└── .github/workflows/deploy.yml # CI/CD (Vercel + Railway)
+NyayaMitra_Final/
+├── backend/            # FastAPI (Python 3.12) - The Legal Brain
+├── frontend/           # React 18 + Vite + Tailwind - The 3D UI
+├── mobile_flutter/     # Flutter WebView Wrapper - Cross-platform Mobile
+└── whatsapp-bot/       # Node.js Webhook - Automated Helpdesk
 ```
 
 ---
 
-## 🌐 Deployment
+## 🌐 Deployment Instructions
 
-### Option A — Vercel + Railway (Recommended, Free)
+### 1. Backend (Render.com)
+*   **Root Directory:** `backend`
+*   **Build Command:** `pip install -r requirements.txt`
+*   **Start Command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+*   **Environment Variables:** Add `GROQ_API_KEY`, `OPENAI_API_KEY`, `SARVAM_API_KEY`.
 
-**Backend (Railway):**
+### 2. Frontend (Netlify.com)
+*   **Base directory:** `frontend`
+*   **Build command:** `npm run build`
+*   **Publish directory:** `dist`
+*   **Environment Variable:** Add `VITE_API_URL` (points to your Render URL).
+
+### 3. Mobile App (Flutter)
+Point the URL in `lib/main.dart` to your live Netlify site and build:
 ```bash
-# Install Railway CLI
-npm install -g @railway/cli
-railway login
-
-# From backend/ directory:
-cd backend
-railway init
-railway up
-
-# Set environment variables in Railway dashboard:
-railway variables set GROQ_API_KEY=gsk_...
-railway variables set OPENAI_API_KEY=sk-...
-railway variables set SARVAM_API_KEY=...
-railway variables set DATABASE_URL=postgresql://...  # Railway provides this
-railway variables set APP_ENV=production
-railway variables set DEBUG=false
-```
-
-**Frontend (Vercel):**
-```bash
-# Install Vercel CLI
-npm install -g vercel
-
-# From frontend/ directory:
-cd frontend
-vercel --prod
-
-# Set in Vercel dashboard → Settings → Environment Variables:
-VITE_API_URL=https://your-railway-url.up.railway.app
-```
-
-### Option B — Docker Compose (Self-hosted)
-
-```bash
-# Copy and fill env vars
-cp backend/.env.example backend/.env
-# Edit backend/.env with your API keys
-
-# Launch entire stack
-docker-compose up -d
-
-# Access:
-# Frontend: http://localhost:3000
-# Backend:  http://localhost:8000
-# API Docs: http://localhost:8000/docs
-```
-
-### Option C — Seed ChromaDB after deployment
-
-```bash
-# After backend is running, seed the 25 core Indian statutes:
-curl -X POST https://your-api-url.com/api/v1/rag/seed
+cd mobile_flutter
+flutter build apk --release
 ```
 
 ---
 
-## 🧪 API Endpoints Quick Reference
+## 🛠️ Local Development
 
-```
-# Health
-GET  /health                    → System status
+```bash
+# Start Backend
+cd backend && python run.py
 
-# Voice Counsellor (RAG)  
-POST /api/v1/counsellor/text    → Text query → legal answer
-GET  /api/v1/counsellor/demo    → Sample response
-
-# Document Decoder
-POST /api/v1/decoder/analyze     → Upload/text → clause analysis
-POST /api/v1/decoder/analyze/demo → Demo analysis
-POST /api/v1/decoder/counter    → Generate counter-clause
-
-# Document Generator
-GET  /api/v1/documents/types    → All 47 doc types
-POST /api/v1/documents/generate → Generate document
-
-# Case Tracker
-GET  /api/v1/cases/             → List cases
-POST /api/v1/cases/             → Create case
-GET  /api/v1/cases/limitation/{type} → Limitation period
-
-# Negotiation Coach
-GET  /api/v1/negotiate/scenarios → 6 role-play scenarios
-POST /api/v1/negotiate/start    → Start session
-POST /api/v1/negotiate/message  → Chat with AI persona
-POST /api/v1/negotiate/debrief  → Get coaching report
-
-# NyayaScore
-POST /api/v1/score/compute      → Calculate score
-GET  /api/v1/score/checklist    → Improvement checklist
-
-# Amendments
-GET  /api/v1/amendments/        → Recent amendments
-GET  /api/v1/amendments/ipc-bns → IPC→BNS mapping
+# Start Frontend
+cd frontend && npm install && npm run dev
 ```
 
 ---
 
 ## 🛡️ Security & Compliance
-
-- **DPDP Act 2023** compliant architecture
-- **AES-256-GCM** client-side encryption for case data (zero-knowledge)
-- No plaintext PII stored on server
-- Rate limiting: 200 req/min per IP
-- CORS configured for production domains only
-- Security headers via Vercel (`vercel.json`)
-
----
-
-## 📱 Android APK (Capacitor)
-
-```bash
-cd frontend
-npx cap init "NyayaMitra" "in.nyayamitra.app"
-npm install @capacitor/android @capacitor/camera @capacitor/microphone
-npx cap add android
-npm run build && npx cap sync android
-npx cap open android   # Opens Android Studio
-```
+- **DPDP Act 2023** compliant architecture.
+- **IPC to BNS Transition:** Automatic mapping for all sections of the Bharatiya Nyaya Sanhita.
+- **Zero-Knowledge Privacy:** Case data is encrypted client-side.
 
 ---
 
 ## 🤝 Team Return 0;
-
 Built with ❤️ for Hacksagon 2026 — *Legal Justice for Every Indian*
