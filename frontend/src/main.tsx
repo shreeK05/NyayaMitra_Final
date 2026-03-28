@@ -8,9 +8,15 @@ import { registerSW } from 'virtual:pwa-register'
 
 const updateSW = registerSW({
   onNeedRefresh() {
-    if (confirm("New legal updates available. Reload app?")) {
-      updateSW(true)
-    }
+    /**
+ * Service Worker disabled for initial production launch to prevent
+ * environment variable caching issues.
+ */
+// if ('serviceWorker' in navigator) {
+//   window.addEventListener('load', () => {
+//     navigator.serviceWorker.register('/service-worker.js')
+//   })
+// }
   },
   onOfflineReady() {
     console.log("⚖️ NyayaMitra is ready to work offline")
