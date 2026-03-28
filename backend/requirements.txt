@@ -42,3 +42,8 @@ slowapi==0.1.9
 # Structured Logging
 structlog==24.4.0
 pytz==2024.1
+numpy
+joblib
+librosa
+pandas
+scikit-learn
