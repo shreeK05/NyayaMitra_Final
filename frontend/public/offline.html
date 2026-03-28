@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NyayaMitra — Offline</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a1a;
+      color: white;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 1.5rem;
+    }
+    .container { max-width: 360px; }
+    .icon { font-size: 4rem; margin-bottom: 1rem; }
+    h1 { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem; color: #f97316; }
+    p { color: #94a3b8; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1rem; }
+    .rights {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 1rem;
+      padding: 1rem;
+      margin: 1rem 0;
+      text-align: left;
+    }
+    .rights h3 { color: #06b6d4; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+    .rights ul { list-style: none; }
+    .rights li { color: #cbd5e1; font-size: 0.82rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .rights li:last-child { border-bottom: none; }
+    .emergency { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); border-radius: 0.75rem; padding: 0.75rem; margin: 0.75rem 0; }
+    .emergency p { color: #fca5a5; font-size: 0.85rem; font-weight: 600; margin: 0; }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 0.9rem;
+      border-radius: 0.75rem;
+      background: linear-gradient(135deg, #f97316, #ef4444);
+      color: white;
+      font-weight: 700;
+      font-size: 0.9rem;
+      border: none;
+      cursor: pointer;
+      margin-top: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">⚖️</div>
+    <h1>You're Offline</h1>
+    <p>NyayaMitra needs internet for AI legal advice. But here are your essential rights:</p>
+
+    <div class="rights">
+      <h3>🔑 Know Your Rights</h3>
+      <ul>
+        <li>💼 Salary must be paid within 7 days — Payment of Wages Act 1936</li>
+        <li>🏠 Landlord needs court order to evict — Rent Control Act</li>
+        <li>👮 FIR is mandatory for cognizable offences — BNSS 2023 S.173</li>
+        <li>🛒 Consumer complaints: 2-year limit — Consumer Protection Act 2019</li>
+        <li>📄 RTI response in 30 days — RTI Act 2005</li>
+        <li>💰 Cheque bounce: Notice within 30 days — NI Act S.138</li>
+      </ul>
+    </div>
+
+    <div class="emergency">
+      <p>🆘 Police: 100 | Women: 181 | DLSA: 15100 | Ambulance: 108</p>
+    </div>
+
+    <button class="btn" onclick="window.location.reload()">🔄 Retry Connection</button>
+  </div>
+</body>
+</html>

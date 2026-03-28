@@ -1,0 +1,35 @@
+name: Deploy Vercel
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'frontend/**'
+
+jobs:
+  deploy:
+    runs-on: windows-latest # Or ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install Dependencies
+        working-directory: ./frontend
+        run: npm ci --legacy-peer-deps
+
+      - name: Build Project
+        working-directory: ./frontend
+        run: npm run build
+
+      - name: Deploy to Vercel
+        working-directory: ./frontend
+        run: npx vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_POLYGON_RPC: ${{ secrets.VITE_POLYGON_RPC }}

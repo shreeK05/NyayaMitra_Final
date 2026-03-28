@@ -1,0 +1,63 @@
+{
+  "name": "NyayaMitra — Legal Justice",
+  "short_name": "NyayaMitra",
+  "description": "AI-powered legal justice platform for every Indian. Free legal advice in 6 languages.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a1a",
+  "theme_color": "#f97316",
+  "orientation": "portrait-primary",
+  "lang": "hi",
+  "scope": "/",
+  "categories": ["legal", "government", "utilities"],
+  "icons": [
+    { "src": "/icons/icon-72x72.png", "sizes": "72x72", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icons/icon-96x96.png", "sizes": "96x96", "type": "image/png" },
+    { "src": "/icons/icon-128x128.png", "sizes": "128x128", "type": "image/png" },
+    { "src": "/icons/icon-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Voice Counsellor",
+      "short_name": "Ask NyayaMitra",
+      "description": "Get instant legal advice by voice",
+      "url": "/counsellor",
+      "icons": [{ "src": "/icons/shortcut-mic.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Generate Legal Notice",
+      "short_name": "Legal Notice",
+      "description": "Generate free legal notice in 30 seconds",
+      "url": "/generator",
+      "icons": [{ "src": "/icons/shortcut-doc.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Know Your Rights",
+      "short_name": "My Rights",
+      "description": "Check your legal rights offline",
+      "url": "/score",
+      "icons": [{ "src": "/icons/shortcut-score.png", "sizes": "96x96" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/home.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "NyayaMitra Home — Legal Justice"
+    }
+  ],
+  "share_target": {
+    "action": "/decoder",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "files": [{ "name": "document", "accept": ["application/pdf", "image/*"] }]
+    }
+  },
+  "protocol_handlers": [
+    { "protocol": "web+nyayamitra", "url": "/?query=%s" }
+  ]
+}
