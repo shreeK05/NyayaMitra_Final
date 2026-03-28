@@ -1,5 +1,9 @@
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
+/**
+ * NyayaMitra - Production Deploy v1.0.1
+ * Triggering fresh build with correct VITE_API_URL
+ */
 import { useEffect } from 'react'
 import BottomNav from '@/components/layout/BottomNav'
 import TopBar from '@/components/layout/TopBar'
