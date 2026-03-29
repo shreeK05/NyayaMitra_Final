@@ -105,21 +105,13 @@ export async function translateIpcToBns(section: string) {
 }
 
 // ── NyayaScore ───────────────────────────────────────
-export async function computeNyayaScore(data: {
-  has_employment_contract: boolean
-  has_rent_agreement: boolean
-  agreement_decoded: boolean
-  pf_enrolled: boolean
-  consumer_insurance: boolean
-  emergency_contacts_set: boolean
-  docs_backed_up: boolean
-  whatsapp_alerts: boolean
-  aadhaar_linked: boolean
-  active_cases_count: number
-}) {
+export async function computeNyayaScore(checklistResponses: Record<string, boolean>, activeCasesCount: number = 0) {
   return apiFetch('/api/v1/score/compute', {
     method: 'POST',
-    body: JSON.stringify(data),
+    body: JSON.stringify({
+      checklist_responses: checklistResponses,
+      active_cases_count: activeCasesCount,
+    }),
   })
 }
 

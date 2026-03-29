@@ -14,15 +14,7 @@ router = APIRouter(prefix="/score", tags=["NyayaScore"])
 
 
 class ScoreInput(BaseModel):
-    has_employment_contract: bool = False
-    has_rent_agreement: bool = False
-    agreement_decoded: bool = False
-    pf_enrolled: bool = False
-    consumer_insurance: bool = False
-    emergency_contacts_set: bool = False
-    docs_backed_up: bool = False
-    whatsapp_alerts: bool = False
-    aadhaar_linked: bool = False
+    checklist_responses: dict[str, bool] = {}
     active_cases_count: int = 0
 
 
@@ -30,20 +22,22 @@ class ScoreInput(BaseModel):
 async def compute_nyaya_score(data: ScoreInput):
     """
     Compute NyayaScore based on user's legal protection checklist.
-    Each component is scored 0-100. Total = weighted average.
+    Handles the dynamic dictionary sent by the frontend quiz.
     """
+    responses = data.checklist_responses
+    
     # Employment Score (weight 25%)
     emp_score = 0
     emp_issues = []
-    if data.has_employment_contract:
+    if responses.get("employment_contract"):
         emp_score += 50
     else:
         emp_issues.append("No written employment contract")
-    if data.pf_enrolled:
+    if responses.get("pf_enrolled"):
         emp_score += 30
     else:
         emp_issues.append("PF/ESIC not enrolled")
-    if data.agreement_decoded:
+    if responses.get("agreement_decoded"):
         emp_score += 20
     else:
         emp_issues.append("Contract not reviewed for illegal clauses")
@@ -51,11 +45,11 @@ async def compute_nyaya_score(data: ScoreInput):
     # Tenancy Score (weight 20%)
     ten_score = 0
     ten_issues = []
-    if data.has_rent_agreement:
+    if responses.get("rent_agreement"):
         ten_score += 50
     else:
         ten_issues.append("No registered rent agreement")
-    if data.agreement_decoded:
+    if responses.get("agreement_decoded"):
         ten_score += 30
     else:
         ten_issues.append("Rent agreement not decoded for risk")
@@ -64,11 +58,11 @@ async def compute_nyaya_score(data: ScoreInput):
     # Consumer Score (weight 20%)
     con_score = 0
     con_issues = []
-    if data.consumer_insurance:
+    if responses.get("consumer_insurance"):
         con_score += 60
     else:
         con_issues.append("No consumer protection insurance")
-    if data.aadhaar_linked:
+    if responses.get("aadhaar_linked"):
         con_score += 40
     else:
         con_issues.append("Aadhaar not linked for fraud protection")
@@ -76,25 +70,25 @@ async def compute_nyaya_score(data: ScoreInput):
     # Personal Safety (weight 15%)
     safety_score = 40
     safety_issues = []
-    if data.emergency_contacts_set:
+    if responses.get("emergency_contacts"):
         safety_score += 40
     else:
         safety_issues.append("No emergency contacts set")
-    if data.aadhaar_linked:
+    if responses.get("aadhaar_linked"):
         safety_score += 20
 
     # Document Readiness (weight 20%)
     doc_score = 0
     doc_issues = []
-    if data.docs_backed_up:
+    if responses.get("docs_backed_up"):
         doc_score += 50
     else:
         doc_issues.append("Important documents not digitally backed up")
-    if data.whatsapp_alerts:
+    if responses.get("whatsapp_alerts"):
         doc_score += 30
     else:
         doc_issues.append("Law alert notifications not enabled")
-    if data.aadhaar_linked:
+    if responses.get("aadhaar_linked"):
         doc_score += 20
 
     # Case Penalty
