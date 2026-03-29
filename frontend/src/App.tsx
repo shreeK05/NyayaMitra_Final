@@ -39,7 +39,7 @@ function FloatingNav() {
   ]
 
   return (
-    <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] px-6 py-4 rounded-[3.5rem] glass-diamond border-white/5 bg-slate-900/40 backdrop-blur-[60px] shadow-[0_30px_100px_rgba(0,0,0,0.5)] flex items-center gap-4 border border-white/10 group transition-all hover:scale-[1.02] hover:bg-slate-900/60">
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] px-4 py-3 rounded-[3rem] glass-diamond border-white/10 bg-slate-900/80 backdrop-blur-[40px] shadow-[0_20px_60px_rgba(0,0,0,0.6)] flex items-center gap-3 border transition-all hover:scale-[1.01]">
       {navItems.map((item) => {
         const isActive = location.pathname === item.path
         return (
@@ -48,13 +48,13 @@ function FloatingNav() {
             href={item.path}
             whileTap={{ scale: 0.9 }}
             className={cn(
-              "w-16 h-16 rounded-[2rem] flex flex-col items-center justify-center gap-1 transition-all relative overflow-hidden",
-              isActive ? "gradient-primary glow-saffron shadow-2xl" : "text-slate-500 hover:text-white hover:bg-white/5"
+               "w-14 h-14 lg:w-16 lg:h-16 rounded-2xl flex flex-col items-center justify-center gap-1.5 transition-all relative overflow-hidden",
+               isActive ? "gradient-primary shadow-2xl scale-110" : "text-slate-400 hover:text-white"
             )}
           >
-            <item.icon size={24} className={cn("relative z-10 transition-transform", isActive && "text-white scale-110")} />
-            <span className={cn("text-[8px] font-black uppercase tracking-widest relative z-10", isActive ? "text-white" : "text-slate-700")}>{item.label}</span>
-            {isActive && <motion.div layoutId="nav-glow" className="absolute inset-0 bg-white/10 animate-pulse pointer-events-none" />}
+            <item.icon size={isActive ? 20 : 18} className="relative z-10" />
+            <span className={cn("text-[9px] font-black uppercase tracking-widest", isActive ? "text-white" : "text-slate-500")}>{item.label}</span>
+            {isActive && <motion.div layoutId="nav-bg" className="absolute inset-x-0 bottom-0 h-1 bg-white opacity-40 shadow-[0_0_10px_white]" />}
           </motion.a>
         )
       })}

@@ -128,17 +128,17 @@ export default function HomePage() {
             </div>
             <h1 className="text-5xl lg:text-7xl font-black text-white leading-[0.95] tracking-tighter font-display">
               Namaste, <span className="text-gradient-saffron text-glow-saffron">{user?.name?.split(' ')[0] || 'Citizen'}</span> <br />
-              <div className="text-4xl lg:text-5xl text-slate-400 mt-2 font-black tracking-tight">Your Legal Pulse is <span className="text-india-green">Stable.</span></div>
+              <div className="text-2xl lg:text-4xl text-slate-400 mt-4 font-bold tracking-tight">Your Legal Pulse is <span className="text-india-green">Healthy.</span></div>
             </h1>
           </div>
-          <div className="flex flex-wrap gap-4">
-             <div className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-white/2 border border-white/5 backdrop-blur-3xl group cursor-pointer hover:bg-white/5 transition-all">
-                <Shield size={20} className="text-india-green group-hover:scale-110 transition-transform" />
-                <span className="text-xs font-black text-slate-300 uppercase tracking-widest">DPDP Compliant Platform</span>
+          <div className="flex flex-wrap gap-4 mt-6">
+             <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white/2 border border-white/5 backdrop-blur-3xl group cursor-help hover:bg-white/5 transition-all">
+                <Shield size={18} className="text-india-green" />
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">DPDP Compliant Data</span>
              </div>
-             <div className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-white/2 border border-white/5 backdrop-blur-3xl group cursor-pointer hover:bg-white/5 transition-all">
-                <Star size={20} className="text-saffron group-hover:scale-110 transition-transform" />
-                <span className="text-xs font-black text-slate-300 uppercase tracking-widest">Bharat AI Certified 🇮🇳</span>
+             <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white/2 border border-white/10 backdrop-blur-3xl group cursor-help hover:bg-white/5 transition-all">
+                <div className="w-4 h-4 rounded-full bg-saffron/20 border border-saffron/40 flex items-center justify-center text-[8px] text-saffron font-bold">A</div>
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Government Safe Stack</span>
              </div>
           </div>
         </motion.div>
@@ -201,23 +201,21 @@ export default function HomePage() {
                   <LayoutGrid size={20} />
                </button>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
               {QUICK_ACTIONS.map(({ id, path, icon: Icon, label, sublabel, color, glow, bg }) => (
-                <TiltCard key={id} className="relative group cursor-pointer h-full">
+                <TiltCard key={id} className="relative group cursor-pointer">
                   <button onClick={() => navigate(path)}
-                    className="w-full text-left p-8 rounded-[3rem] bg-slate-900/10 border border-white/5 hover:border-white/10 backdrop-blur-3xl flex flex-col gap-6 lg:gap-10 transition-all duration-500 h-full relative overflow-hidden"
+                    className="w-full text-left p-10 rounded-[4rem] bg-slate-900/10 border border-white/5 hover:border-white/20 backdrop-blur-3xl flex flex-col gap-8 transition-all duration-500 relative overflow-hidden h-full"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
-                    <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center transition-all group-hover:scale-110 group-hover:-rotate-3 shadow-2xl relative z-10"
-                      style={{ background: `${color}15`, border: `1px solid ${color}30`, boxShadow: `0 10px 40px -10px ${glow}` }}>
-                      <Icon size={28} style={{ color }} className="font-black lg:w-10 lg:h-10" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent pointer-events-none" />
+                    <div className="w-16 h-16 rounded-3xl flex items-center justify-center transition-all group-hover:scale-110 shadow-2xl relative z-10"
+                      style={{ background: `${color}15`, border: `1px solid ${color}40`, boxShadow: `0 10px 40px -10px ${glow}` }}>
+                      <Icon size={28} style={{ color }} className="font-black" />
                     </div>
                     <div>
-                      <div className="text-white text-lg lg:text-2xl font-black tracking-tighter leading-tight font-display">{label}</div>
-                      <p className="text-slate-500 text-[11px] lg:text-sm font-bold tracking-tight mt-2 opacity-80">{sublabel}</p>
+                      <div className="text-white text-xl lg:text-3xl font-black tracking-tighter leading-tight font-display">{label}</div>
+                      <p className="text-slate-500 text-[12px] lg:text-sm font-bold tracking-tight mt-2 opacity-80 leading-snug">{sublabel}</p>
                     </div>
-                    {/* Hover Glow */}
-                    <div className="absolute -inset-1 opacity-0 group-hover:opacity-100 transition-opacity blur-2xl -z-10" style={{ background: `radial-gradient(circle at center, ${color}20, transparent)` }} />
                   </button>
                 </TiltCard>
               ))}
