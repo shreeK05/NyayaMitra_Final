@@ -1,17 +1,19 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Bell, Wifi, WifiOff, ChevronLeft, LogOut } from 'lucide-react'
+import { Bell, Wifi, WifiOff, ChevronLeft, LogOut, Menu, Search, User } from 'lucide-react'
 import { useAppStore } from '@/store/appStore'
 import { LANGUAGES } from '@/utils'
+import { motion, AnimatePresence } from 'framer-motion'
+import { cn } from '@/utils'
 
 const PAGE_TITLES: Record<string, string> = {
-  '/': 'NyayaMitra',
-  '/counsellor': 'AI Legal Counsel',
+  '/': 'Digital Bharat HQ',
+  '/counsellor': 'Neural Counsellor',
   '/decoder': 'Document Decoder',
-  '/generator': 'Document Generator',
-  '/amendments': 'Amendment Tracker',
-  '/cases': 'My Cases',
-  '/score': 'NyayaScore™',
-  '/negotiate': 'Negotiation Coach',
+  '/generator': 'Notice Generator',
+  '/amendments': 'Public Gazette',
+  '/cases': 'Legal Case Docket',
+  '/score': 'NyayaScore™ Profile',
+  '/negotiate': 'AI Battle Coach',
 }
 
 export default function TopBar() {
@@ -29,72 +31,92 @@ export default function TopBar() {
   }
 
   return (
-    <header className="sticky top-0 z-40" style={{ background: 'rgba(8,12,31,0.85)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,153,51,0.08)' }}>
-      <div className="flex items-center justify-between px-4 py-3">
-        {/* Left */}
-        <div className="flex items-center gap-2.5">
-          {canGoBack ? (
-            <button onClick={() => navigate(-1)}
-              className="p-1.5 rounded-xl hover:bg-white/8 transition-colors text-slate-300 hover:text-white"
-              style={{ background: 'rgba(255,255,255,0.05)' }}>
-              <ChevronLeft size={20} />
-            </button>
-          ) : (
-            <div className="w-8 h-8 rounded-xl gradient-primary flex items-center justify-center glow-saffron">
-              <span className="text-white font-black text-sm">N</span>
+    <header className="sticky top-0 z-40 bg-[#030712]/80 backdrop-blur-3xl border-b border-white/5 shadow-[0_1px_3px_rgba(0,0,0,0.2)]">
+      <div className="flex items-center justify-between px-6 lg:px-10 h-16 lg:h-20">
+        
+        {/* Left Side: Dynamic Context */}
+        <div className="flex items-center gap-5 lg:gap-8">
+          <div className="lg:hidden">
+             <button className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-400">
+                <Menu size={20} />
+             </button>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            {canGoBack && (
+              <motion.button 
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                onClick={() => navigate(-1)}
+                className="p-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-slate-400 hover:text-white"
+              >
+                <ChevronLeft size={18} />
+              </motion.button>
+            )}
+            <div>
+              <AnimatePresence mode="wait">
+                <motion.h1 
+                  key={title}
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -5 }}
+                  className={cn(
+                    'font-black tracking-tight font-display transition-all',
+                    isHome ? 'text-2xl lg:text-3xl text-gradient-saffron' : 'text-lg lg:text-2xl text-white'
+                  )}
+                >
+                  {title}
+                </motion.h1>
+              </AnimatePresence>
+              <div className="flex items-center gap-2 mt-0.5">
+                 <div className={cn("w-1.5 h-1.5 rounded-full", isOnline ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-red-500")} />
+                 <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{isOnline ? 'System Live' : 'Link Interrupted'}</span>
+              </div>
             </div>
-          )}
-          <h1 className={`font-bold tracking-tight ${isHome ? 'text-gradient-saffron text-xl' : 'text-white text-base'}`}>
-            {title}
-          </h1>
+          </div>
         </div>
 
-        {/* Right */}
-        <div className="flex items-center gap-1.5">
-          {/* Live indicator */}
-          <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold ${
-            isOnline ? 'text-emerald-400' : 'text-red-400'
-          }`} style={{ background: isOnline ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)', border: isOnline ? '1px solid rgba(16,185,129,0.2)' : '1px solid rgba(239,68,68,0.2)' }}>
-            {isOnline ? <Wifi size={10} /> : <WifiOff size={10} />}
-            <span>{isOnline ? 'Live' : 'Offline'}</span>
+        {/* Right Side: Identity & Intelligence */}
+        <div className="flex items-center gap-4 lg:gap-6">
+          <div className="hidden lg:flex items-center gap-2 bg-white/5 border border-white/8 rounded-2xl px-4 py-2 hover:bg-white/10 transition-all group cursor-pointer relative">
+             <Search size={16} className="text-slate-500 group-hover:text-white transition-colors" />
+             <input type="text" placeholder="Search statutes..." className="bg-transparent border-none outline-none text-xs text-slate-400 placeholder-slate-600 font-bold w-32 focus:w-48 transition-all" />
+             <div className="px-1.5 py-0.5 rounded-md bg-white/10 text-[9px] font-black text-slate-500 border border-white/10">⌘ K</div>
           </div>
 
-          {/* Language selector */}
-          <select value={language} onChange={(e) => setLanguage(e.target.value as any)}
-            className="rounded-lg px-2 py-1 text-xs text-slate-300 cursor-pointer focus:outline-none"
-            style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}>
-            {Object.entries(LANGUAGES).map(([code, { nativeName }]) => (
-              <option key={code} value={code} className="bg-slate-900">{nativeName}</option>
-            ))}
-          </select>
+          <button className="relative p-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors text-slate-400 hover:text-white group">
+            <Bell size={20} className="group-hover:rotate-12 transition-transform" />
+            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-saffron rounded-full border-2 border-[#030712] animate-pulse" />
+          </button>
 
-          {isHome && (
-            <button className="relative p-2 rounded-xl transition-colors text-slate-400 hover:text-white"
-              style={{ background: 'rgba(255,255,255,0.05)' }}>
-              <Bell size={16} />
-              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-orange-500 rounded-full animate-pulse" />
-            </button>
-          )}
+          <div className="h-8 lg:h-10 w-px bg-white/5" />
 
-          {/* User avatar / logout */}
           {user?.isLoggedIn && (
-            <div className="flex items-center gap-1.5 ml-1">
-              <div className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-black text-white"
-                style={{ background: 'linear-gradient(135deg, #ff9933, #f59e0b)' }}>
-                {user.name?.charAt(0).toUpperCase() || 'U'}
+            <div className="flex items-center gap-4 pl-2 lg:pl-4">
+              <div className="text-right hidden sm:block">
+                 <div className="text-xs font-black text-white hover-lift transition-all">{user.name?.split(' ')[0]}</div>
+                 <div className="text-[9px] font-black text-slate-500 uppercase tracking-tight">{user.state || 'Maharashtra'}</div>
               </div>
-              <button onClick={handleLogout}
-                className="p-1.5 rounded-lg transition-colors text-slate-500 hover:text-red-400"
-                title="Logout">
-                <LogOut size={14} />
+              <div className="relative group cursor-pointer">
+                <div className="absolute -inset-1 bg-gradient-to-r from-saffron to-amber-600 rounded-2xl blur opacity-20 group-hover:opacity-60 transition-opacity" />
+                <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-2xl bg-[#0f172a] border border-white/10 flex items-center justify-center text-lg font-black text-white shadow-2xl relative z-10 transition-transform group-hover:scale-105 active:scale-95">
+                  <User size={22} className="text-saffron" />
+                </div>
+              </div>
+              <button 
+                onClick={handleLogout}
+                className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500/20 transition-all shadow-lg"
+                title="Secure Terminal Logoff"
+              >
+                <LogOut size={18} />
               </button>
             </div>
           )}
         </div>
       </div>
 
-      {/* Gradient bottom border */}
-      <div className="h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,153,51,0.25), transparent)' }} />
+      {/* Identity Gradient Sub-line */}
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-white/5 to-transparent" />
     </header>
   )
 }
