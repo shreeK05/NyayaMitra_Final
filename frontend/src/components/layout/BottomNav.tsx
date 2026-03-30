@@ -1,14 +1,14 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Home, MessageSquare, FileText, Scale, Bell, Search, Shield, Zap } from 'lucide-react'
+import { Home, MessageSquare, FileText, Scale, Bell, Search, Shield, Zap, Target, Activity, History } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/utils'
 
 const NAV_ITEMS = [
-  { path: '/', icon: Home, label: 'Home' },
+  { path: '/home', icon: Home, label: 'Home' },
   { path: '/counsellor', icon: MessageSquare, label: 'Counsel' },
-  { path: '/generator', icon: FileText, label: 'Docs' },
-  { path: '/cases', icon: Scale, label: 'Cases' },
-  { path: '/amendments', icon: Bell, label: 'Updates' },
+  { path: '/generator', icon: FileText, label: 'Forge' },
+  { path: '/tracker', icon: Target, label: 'Docket' },
+  { path: '/score', icon: Activity, label: 'Audit' },
 ]
 
 export default function BottomNav() {
@@ -16,53 +16,58 @@ export default function BottomNav() {
   const location = useLocation()
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 safe-bottom lg:hidden pointer-events-none px-6 pb-6">
+    <nav className="fixed bottom-0 left-0 right-0 z-[1000] lg:hidden pointer-events-none px-6 pb-12">
       <div className="max-w-md mx-auto pointer-events-auto">
-        <div className="relative rounded-[2.5rem] bg-[#0f172a]/70 backdrop-blur-3xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-2 flex items-center justify-around translate-y-0 transition-transform active:translate-y-1">
+        <div className="relative rounded-[3.5rem] bg-[#030712]/80 backdrop-blur-3xl border border-white/10 shadow-[0_40px_100px_rgba(0,0,0,0.8)] p-2.5 flex items-center justify-around border-glow group/nav">
           
-          {/* Animated Selection Bubble Background */}
-          <div className="absolute inset-2 flex items-center justify-around pointer-events-none">
-             {NAV_ITEMS.map(({ path }) => (
-               <div key={path} className="flex-1 flex justify-center">
-                  {location.pathname === path && (
-                    <motion.div 
-                      layoutId="active-bubble"
-                      className="w-12 h-12 rounded-2xl bg-gradient-to-br from-saffron/20 to-orange-600/10 border border-saffron/20 shadow-lg shadow-saffron/10"
-                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    />
-                  )}
-               </div>
-             ))}
-          </div>
+          {/* 🌌 Neural Glow Trace */}
+          <div className="absolute inset-x-12 -top-px h-px bg-gradient-to-r from-transparent via-saffron/40 to-transparent shadow-[0_0_20px_#ff9933] opacity-0 group-hover/nav:opacity-100 transition-opacity duration-1000" />
+          
+          <AnimatePresence>
+             <div className="absolute inset-0 flex items-center justify-around pointer-events-none px-2.5">
+                {NAV_ITEMS.map(({ path }) => (
+                  <div key={path} className="flex-1 flex justify-center">
+                     {location.pathname === path && (
+                       <motion.div 
+                         layoutId="active-diamond"
+                         className="w-14 h-14 rounded-2xl bg-black border border-white/10 shadow-[0_0_40px_rgba(255,153,51,0.15)] relative overflow-hidden"
+                         transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                       >
+                          <div className="absolute inset-0 bg-saffron/10 animate-pulse" />
+                          <div className="absolute inset-x-0 bottom-0 h-0.5 bg-saffron shadow-[0_0_10px_#ff9933]" />
+                       </motion.div>
+                     )}
+                  </div>
+                ))}
+             </div>
+          </AnimatePresence>
 
           {NAV_ITEMS.map(({ path, icon: Icon, label }) => {
             const active = location.pathname === path
             return (
               <motion.button
                 key={path}
-                whileTap={{ scale: 0.9 }}
+                whileTap={{ scale: 0.85 }}
                 onClick={() => navigate(path)}
-                className="flex-1 flex flex-col items-center justify-center p-3 relative z-10 transition-all group"
+                className="flex-1 flex flex-col items-center justify-center py-4 relative z-10 transition-all group/btn"
               >
                 <div className={cn(
-                  'w-6 h-6 flex items-center justify-center transition-all duration-300',
-                  active ? 'text-saffron scale-110 drop-shadow-[0_0_12px_rgba(255,153,51,0.5)]' : 'text-slate-500 group-hover:text-slate-300'
+                  'w-8 h-8 flex items-center justify-center transition-all duration-500',
+                  active ? 'text-saffron scale-110' : 'text-slate-700 group-hover/btn:text-slate-400'
                 )}>
-                  <Icon size={22} className={active ? 'stroke-[2.5px]' : 'stroke-2'} />
+                  <Icon size={24} className={cn(active ? 'stroke-[2.5px]' : 'stroke-2', 'transition-transform duration-500', active ? 'animate-neural-pulse' : 'group-hover/btn:scale-110')} />
                 </div>
+                
                 <span className={cn(
-                  'text-[9px] font-black uppercase tracking-tighter transition-all duration-300 transform origin-bottom',
-                  active ? 'text-saffron opacity-100 scale-100 mt-1.5' : 'text-slate-600 opacity-60 scale-90 mt-1'
+                  'text-[9px] font-black uppercase tracking-[0.2em] transition-all duration-500 transform origin-bottom font-display italic mt-2',
+                  active ? 'text-saffron opacity-100 scale-100' : 'text-slate-800 opacity-40 scale-90'
                 )}>
                   {label}
                 </span>
-                
-                {/* Active Indicator Glow */}
+
+                {/* Micro Indicator */}
                 {active && (
-                  <motion.div 
-                    layoutId="active-indicator"
-                    className="absolute -bottom-1 w-1 h-1 rounded-full bg-saffron shadow-[0_0_8px_rgba(255,153,51,1)]"
-                  />
+                   <motion.div layoutId="dot" className="absolute -bottom-2 w-1 h-1 rounded-full bg-saffron shadow-[0_0_10px_#ff9933]" />
                 )}
               </motion.button>
             )

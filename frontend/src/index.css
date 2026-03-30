@@ -1,31 +1,33 @@
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Syne:wght@400;500;600;700;800&display=swap');
 
 @theme {
-  --color-saffron: #f59e0b;
+  --color-saffron: #ff9933;
   --color-emerald: #10b981;
   --color-indigo: #6366f1;
   --color-navy: #030712;
-  --color-navy-light: #0f172a;
   --color-gold: #fbbf24;
+  --color-accent-purple: #a855f7;
+  --color-accent-cyan: #22d3ee;
 }
 
 :root {
-  --saffron: #f59e0b;
+  --saffron: #ff9933;
   --emerald: #10b981;
   --indigo: #6366f1;
   --navy: #030712;
-  --navy-light: #0f172a;
   --gold: #fbbf24;
 }
 
 body {
   @apply bg-[#030712] text-slate-100 overflow-x-hidden antialiased;
   font-family: 'Inter', sans-serif;
+  cursor: default;
 }
 
 .font-display { font-family: 'Outfit', sans-serif; }
+.font-neural { font-family: 'Syne', sans-serif; }
 
 /* 💎 Premium Glassmorphism */
 .glass-panel {
@@ -33,91 +35,73 @@ body {
 }
 
 .glass-nav {
-  @apply bg-navy/80 backdrop-blur-3xl border-b border-white/5 sticky top-0 z-[100];
+  @apply bg-[#030712]/80 backdrop-blur-3xl border-b border-white/5;
 }
 
 .glass-card {
-  @apply bg-slate-900/40 backdrop-blur-xl border border-white/5 shadow-2xl transition-all duration-300 hover:border-white/20 hover:bg-slate-900/60;
+  @apply bg-slate-900/40 backdrop-blur-3xl border border-white/5 shadow-2xl transition-all duration-500 hover:border-white/10;
 }
 
-.glass-button {
-  @apply bg-white/5 backdrop-blur-lg border border-white/10 px-6 py-3 rounded-2xl font-medium transition-all hover:bg-white/10 active:scale-95;
+.glass-diamond {
+  background: radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+              rgba(255, 255, 255, 0.02);
+  @apply backdrop-blur-3xl border border-white/5;
 }
 
 /* 🌈 Gradients */
 .gradient-saffron {
-  @apply bg-gradient-to-br from-saffron to-amber-600;
+  @apply bg-gradient-to-br from-[#ff9933] to-[#ff6600];
 }
 
 .gradient-indigo {
-  @apply bg-gradient-to-br from-indigo to-violet-600;
+  @apply bg-gradient-to-br from-indigo to-indigo-700;
 }
 
-.text-gradient {
-  @apply bg-clip-text text-transparent bg-gradient-to-br from-white via-slate-200 to-slate-400;
+.gradient-emerald {
+  @apply bg-gradient-to-br from-emerald to-emerald-700;
 }
 
 .text-gradient-saffron {
-  @apply bg-clip-text text-transparent bg-gradient-to-br from-saffron to-amber-500;
+  @apply bg-clip-text text-transparent bg-gradient-to-br from-[#ff9933] to-[#ffcc66] font-black;
 }
 
-/* ✨ Effects & Animations */
-.glow-saffron {
-  @apply shadow-[0_0_30px_rgba(245,158,11,0.2)];
-}
-
-.glow-indigo {
-  @apply shadow-[0_0_30px_rgba(99,102,241,0.2)];
-}
-
-.mesh-background {
-  background: 
-    radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 100% 100%, rgba(245, 158, 11, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
-}
-
-.animate-slow-fade {
-  animation: fade-in 1.5s ease-out;
-}
-
-@keyframes fade-in {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.pulse-ring {
-  @apply relative;
-}
-
-.pulse-ring::after {
-  content: "";
-  @apply absolute inset-0 rounded-full bg-saffron/30 scale-100;
-  animation: pulse-ring 2s infinite;
-}
-
-@keyframes pulse-ring {
-  0% { transform: scale(1); opacity: 0.8; }
-  100% { transform: scale(1.6); opacity: 0; }
-}
-
-.scrollbar-hide::-webkit-scrollbar { display: none; }
-.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-
-/* 📱 Bottom Navigation Padding */
-.safe-p-bottom {
-  padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
-}
-
-.tab-active {
-  @apply text-saffron scale-110;
-}
-
-.card-shadow {
-  box-shadow: 0 0 50px -12px rgba(0, 0, 0, 0.5);
-}
-
+/* ✨ Advanced Effects */
 .border-glow {
-  @apply border-white/10 hover:border-saffron/30 transition-colors duration-500;
+  @apply border-white/10 hover:border-white/20 transition-all duration-700;
+  box-shadow: inset 0 0 20px rgba(255,255,255,0.02);
 }
 
+.border-glow:hover {
+  box-shadow: inset 0 0 40px rgba(255,255,255,0.05);
+}
+
+.neural-pulse {
+  animation: neural-pulse 4s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+@keyframes neural-pulse {
+  0%, 100% { opacity: 0.15; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(1.1); }
+}
+
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* 🖋️ Typography Enhancements */
+.text-glow-saffron {
+  text-shadow: 0 0 20px rgba(255, 153, 51, 0.3);
+}
+
+.tracking-ultra {
+  letter-spacing: 0.5em;
+}
+
+/* 📱 Centering & Alignment Utility */
+.center-properly {
+  @apply flex flex-col items-center justify-center text-center;
+}
+
+/* 🏷️ Threat Labels */
+.threat-badge {
+  @apply px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 font-black uppercase text-[10px] tracking-widest;
+}
