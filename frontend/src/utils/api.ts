@@ -63,6 +63,35 @@ export async function getDemoLegalResponse(): Promise<LegalResponse> {
   return apiFetch('/api/v1/counsellor/demo')
 }
 
+export async function askVoiceQuestion(params: {
+  audio: Blob
+  language?: string
+  user_state?: string
+  reply_voice?: boolean
+}): Promise<{
+  transcribed_text: string
+  stt_confidence: number
+  legal_response: LegalResponse
+  audio_response_b64: string | null
+}> {
+  const form = new FormData()
+  form.append('audio', params.audio, 'audio.wav')
+  form.append('language', params.language || 'hi')
+  form.append('user_state', params.user_state || 'Maharashtra')
+  form.append('reply_voice', String(params.reply_voice ?? true))
+
+  const res = await fetch(`${BASE_URL}/api/v1/counsellor/voice`, {
+    method: 'POST',
+    body: form,
+  })
+  
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: 'Voice processing failed' }))
+    throw new Error(err.detail || `HTTP ${res.status}`)
+  }
+  return res.json()
+}
+
 // ── Document Generator ───────────────────────────────
 export async function getDocumentTypes(): Promise<{ doc_types: DocType[]; total: number }> {
   return apiFetch('/api/v1/documents/types')

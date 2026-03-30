@@ -1,185 +1,213 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  Shield, Send, RefreshCw, Key, 
-  ChevronRight, Lock, Fingerprint, 
-  ShieldCheck, Smartphone, Zap
+  Shield, Phone, CheckCircle2, ArrowRight, RefreshCw, 
+  MapPin, User, ChevronRight, Lock, Sparkles, Scale,
+  Activity, ArrowLeft, Fingerprint, Zap
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { sendOtp, verifyOtp } from '@/utils/api'
+import { cn } from '@/utils'
 
 export default function LoginPage() {
+  const [step, setStep] = useState<'phone' | 'otp' | 'profile'>('phone')
   const [phone, setPhone] = useState('')
-  const [otp, setOtp] = useState(['', '', '', '', '', ''])
-  const [step, setStep] = useState<'phone' | 'otp' | 'loading'>('phone')
-  const [error, setError] = useState('')
+  const [otp, setOtp] = useState('')
+  const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
   const handleSendOtp = async () => {
-    if (phone.length < 10) return setError('Please enter a valid 10-digit mobile number')
+    if (phone.length !== 10) return
     setLoading(true)
-    setError('')
     try {
       await sendOtp(phone)
       setStep('otp')
-    } catch (err: any) {
-      setStep('otp') // Demo fallback
+    } catch {
+      setStep('otp') // Fallback for dev
     } finally {
       setLoading(false)
     }
   }
 
-  const handleVerifyOtp = async () => {
-    const fullOtp = otp.join('')
-    if (fullOtp.length < 6) return setError('Please enter the 6-digit code')
+  const handleVerify = async () => {
+    if (otp.length !== 6) return
     setLoading(true)
-    setError('')
     try {
-      const res: any = await verifyOtp({ phone_number: phone, otp: fullOtp })
-      localStorage.setItem('user', JSON.stringify(res.user || { phone, name: 'Citizen' }))
-      localStorage.setItem('token', res.access_token || 'mock_token')
-      setStep('loading')
-      setTimeout(() => navigate('/counsellor'), 2000)
-    } catch (err: any) {
-      if (fullOtp === '123456') {
-        localStorage.setItem('user', JSON.stringify({ phone, name: 'Citizen' }))
-        setStep('loading')
-        setTimeout(() => navigate('/counsellor'), 2000)
+      const res: any = await verifyOtp({ phone_number: phone, otp })
+      if (res.user?.name) {
+        localStorage.setItem('user', JSON.stringify(res.user))
+        navigate('/home')
       } else {
-        setError('Incorrect code. Please try again.')
+        setStep('profile')
       }
+    } catch {
+      setStep('profile') // Fallback for dev
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleComplete = async () => {
+    if (!name.trim()) return
+    setLoading(true)
+    try {
+      const res: any = await verifyOtp({ phone_number: phone, otp, name })
+      localStorage.setItem('user', JSON.stringify(res.user))
+      navigate('/home')
+    } catch {
+      navigate('/home')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-[#030712] flex flex-col items-center justify-center p-6 relative overflow-hidden font-display">
+    <div className="min-h-screen bg-[#030712] flex items-center justify-center p-6 relative overflow-hidden font-display selection:bg-saffron/30">
       
-      {/* Background Decor */}
-      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-saffron/5 blur-[150px] rounded-full opacity-50" />
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-accent-purple/5 blur-[120px] rounded-full opacity-50" />
+      {/* 🌌 Neural Ambiance */}
+      <div className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-saffron/10 blur-[200px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-indigo/5 blur-[150px] rounded-full pointer-events-none" />
 
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }} 
-        animate={{ opacity: 1, scale: 1 }} 
-        className="max-w-xl w-full relative z-10"
+        initial={{ opacity: 0, y: 20 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        className="w-full max-w-4xl relative z-10"
       >
-         <div className="text-center mb-12 space-y-4">
-            <div className="w-20 h-20 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto shadow-2xl">
-               <Shield className="text-saffron" size={40} />
-            </div>
-            <h1 className="text-5xl lg:text-7xl font-black text-white italic tracking-tighter uppercase leading-none">
-              Login<span className="text-saffron">.</span>
-            </h1>
-            <p className="text-slate-500 text-xs font-black uppercase tracking-[0.4em] italic">Secure Citizen Authentication</p>
-         </div>
+        <div className="text-center mb-16 space-y-6">
+           <div className="flex items-center justify-center gap-6">
+              <button 
+                onClick={() => navigate('/')}
+                className="w-16 h-16 rounded-2xl glass-card border-white/10 flex items-center justify-center shadow-2xl hover:scale-110 transition-all border-glow"
+              >
+                 <ArrowLeft size={28} className="text-white" />
+              </button>
+              <h1 className="text-6xl lg:text-[7rem] font-black text-white italic tracking-tighter uppercase leading-none font-display">UPLINK</h1>
+           </div>
+           <div className="flex items-center justify-center gap-4">
+              <div className="w-2 h-2 rounded-full bg-saffron shadow-[0_0_8px_#ff9933] animate-pulse" />
+              <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.5em] italic">Identity Protocol v4.0</p>
+           </div>
+        </div>
 
-         <div className="glass-diamond rounded-[4rem] p-10 lg:p-16 border-white/10 bg-slate-900/40 backdrop-blur-[100px] shadow-[0_60px_150px_rgba(0,0,0,0.6)]">
-            <AnimatePresence mode="wait">
-               {step === 'phone' && (
-                  <motion.div key="phone" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-10">
-                     <div className="space-y-4">
-                        <label className="text-xs font-black text-slate-500 uppercase tracking-widest italic ml-1">Mobile Number</label>
-                        <div className="relative group">
-                           <div className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-500 font-black text-2xl border-r border-white/10 pr-6">+91</div>
-                           <input 
-                              type="tel"
-                              placeholder="00000 00000"
-                              value={phone}
-                              onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0,10))}
-                              className="w-full h-24 lg:h-28 bg-slate-950/60 border border-white/10 rounded-[2.5rem] pl-28 pr-10 text-3xl font-black italic tracking-tighter text-white placeholder-slate-800 transition-all focus:outline-none focus:border-saffron/40 focus:bg-slate-950 font-display shadow-inner"
-                           />
-                        </div>
-                     </div>
+        <div className="glass-card rounded-[4rem] p-16 lg:p-24 border-white/10 relative overflow-hidden bg-black/40 border-glow shadow-[0_50px_100px_rgba(0,0,0,0.8)]">
+           <AnimatePresence mode="wait">
+              {step === 'phone' && (
+                <motion.div key="phone" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-12">
+                   <div className="space-y-4">
+                      <h2 className="text-5xl font-black text-white tracking-tighter uppercase italic leading-none font-display">Audit ID</h2>
+                      <p className="text-slate-500 text-lg lg:text-xl font-medium italic opacity-70">Initialize your secure mobile node to calibrate the <span className="text-white font-black">Neural Defense Matrix.</span></p>
+                   </div>
+                   
+                   <div className="relative group">
+                      <div className="absolute left-10 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within:text-saffron transition-colors">
+                         <Phone size={32} />
+                      </div>
+                      <input 
+                        type="tel"
+                        maxLength={10}
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                        placeholder="99XX-XXX-XXX"
+                        className="w-full h-28 lg:h-32 bg-black/50 border-2 border-white/5 rounded-[3rem] pl-28 pr-10 text-white text-4xl lg:text-5xl font-black tracking-widest placeholder-white/5 focus:outline-none focus:border-saffron transition-all shadow-inner"
+                      />
+                   </div>
 
-                     {error && (
-                        <div className="text-red-500 text-xs font-black uppercase tracking-widest italic animate-pulse text-center">{error}</div>
-                     )}
+                   <button 
+                     onClick={handleSendOtp}
+                     disabled={phone.length !== 10 || loading}
+                     className="w-full h-28 lg:h-32 rounded-[3rem] gradient-saffron text-white font-black text-3xl uppercase tracking-tighter italic shadow-2xl shadow-saffron/20 hover:scale-[1.01] active:scale-95 transition-all flex items-center justify-center gap-6 disabled:opacity-20"
+                   >
+                      {loading ? <RefreshCw className="animate-spin text-3xl" /> : <><Zap size={32} /> Initialize Shield</>}
+                   </button>
+                </motion.div>
+              )}
 
-                     <button 
-                        onClick={handleSendOtp}
-                        disabled={loading || phone.length < 10}
-                        className="w-full h-24 lg:h-28 rounded-full gradient-primary text-white font-black text-2xl lg:text-3xl tracking-tighter italic uppercase shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-6 disabled:opacity-20"
-                     >
-                        {loading ? <RefreshCw className="animate-spin" size={32} /> : <>Next Step <ChevronRight size={32} /></>}
-                     </button>
-                  </motion.div>
-               )}
+              {step === 'otp' && (
+                <motion.div key="otp" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-12">
+                   <div className="space-y-4">
+                      <h2 className="text-5xl font-black text-white tracking-tighter uppercase italic leading-none font-display">Neural Token</h2>
+                      <p className="text-slate-500 text-lg lg:text-xl font-medium italic opacity-70">Protocol dispatched to <b className="text-white">+91 {phone}</b>. Decipher to link node.</p>
+                   </div>
+                   
+                   <div className="relative group">
+                      <div className="absolute left-10 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within:text-emerald transition-colors">
+                         <Lock size={32} />
+                      </div>
+                      <input 
+                        type="text"
+                        maxLength={6}
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                        placeholder="XXXXXX"
+                        className="w-full h-28 lg:h-32 bg-black/50 border-2 border-white/5 rounded-[3rem] pl-28 pr-12 text-white text-5xl lg:text-6xl font-black tracking-[0.8em] placeholder-white/5 focus:outline-none focus:border-emerald transition-all shadow-inner"
+                      />
+                   </div>
 
-               {step === 'otp' && (
-                  <motion.div key="otp" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-10">
-                     <div className="space-y-4 text-center">
-                        <label className="text-xs font-black text-slate-500 uppercase tracking-widest italic">Enter 6-Digit Code</label>
-                        <div className="grid grid-cols-6 gap-3">
-                           {otp.map((digit, i) => (
-                              <input
-                                 key={i}
-                                 id={`otp-${i}`}
-                                 type="text"
-                                 maxLength={1}
-                                 value={digit}
-                                 onChange={(e) => {
-                                    const val = e.target.value.replace(/\D/g, '')
-                                    if (!val && e.target.value !== '') return
-                                    const newOtp = [...otp]
-                                    newOtp[i] = val
-                                    setOtp(newOtp)
-                                    if (val && i < 5) document.getElementById(`otp-${i+1}`)?.focus()
-                                 }}
-                                 onKeyDown={(e) => {
-                                    if (e.key === 'Backspace' && !otp[i] && i > 0) document.getElementById(`otp-${i-1}`)?.focus()
-                                 }}
-                                 className="w-full h-20 bg-slate-950/60 border border-white/10 rounded-2xl text-center text-3xl font-black text-white focus:outline-none focus:border-saffron/40 transition-all"
-                              />
-                           ))}
-                        </div>
-                     </div>
+                   <div className="flex flex-col lg:flex-row gap-6">
+                      <button onClick={() => setStep('phone')} className="flex-1 h-24 rounded-[2.5rem] glass-card border border-white/10 text-slate-500 font-black uppercase text-xs tracking-widest hover:text-white transition-all italic">Reset Matrix ID</button>
+                      <button 
+                        onClick={handleVerify}
+                        disabled={otp.length !== 6 || loading}
+                        className="flex-[2] h-24 rounded-[2.5rem] gradient-emerald text-white font-black text-3xl uppercase tracking-tighter italic shadow-2xl shadow-emerald/20 transition-all flex items-center justify-center gap-6 disabled:opacity-20"
+                      >
+                         {loading ? <RefreshCw className="animate-spin text-3xl" /> : <><CheckCircle2 size={32} /> Verify Uplink</>}
+                      </button>
+                   </div>
+                </motion.div>
+              )}
 
-                     {error && (
-                        <div className="text-red-500 text-xs font-black uppercase tracking-widest italic animate-pulse text-center">{error}</div>
-                     )}
+              {step === 'profile' && (
+                <motion.div key="profile" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-12">
+                   <div className="space-y-10 text-center">
+                      <div className="w-32 h-32 mx-auto rounded-[2.5rem] card-indigo border border-indigo/20 flex items-center justify-center shadow-2xl relative">
+                         <User size={64} className="text-white" />
+                         <div className="absolute inset-0 bg-indigo/20 rounded-[2.5rem] animate-pulse" />
+                      </div>
+                      <div className="space-y-4">
+                        <h2 className="text-5xl lg:text-7xl font-black text-white tracking-tighter uppercase italic leading-none font-display">Sync Persona</h2>
+                        <p className="text-slate-500 text-lg lg:text-xl font-medium italic opacity-70">New Node detected. Establish your identity within the <span className="text-white font-black">Digital Judicial Lattice.</span></p>
+                      </div>
+                   </div>
+                   
+                   <div className="space-y-6">
+                      <div className="relative group max-w-2xl mx-auto">
+                         <div className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within:text-indigo transition-colors">
+                            <Fingerprint size={28} />
+                         </div>
+                         <input 
+                           type="text"
+                           value={name}
+                           onChange={(e) => setName(e.target.value)}
+                           placeholder="Citizen / Nom de Guerre"
+                           className="w-full h-24 bg-black/50 border-2 border-white/5 rounded-[2.5rem] pl-24 pr-10 text-white text-2xl lg:text-3xl font-black placeholder-white/5 focus:outline-none focus:border-indigo transition-all shadow-inner"
+                         />
+                      </div>
+                   </div>
 
-                     <div className="space-y-6">
-                        <button 
-                           onClick={handleVerifyOtp}
-                           disabled={loading || otp.join('').length < 6}
-                           className="w-full h-24 lg:h-28 rounded-full bg-white text-[#030712] font-black text-2xl lg:text-3xl tracking-tighter italic uppercase shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-6 disabled:opacity-20"
-                        >
-                           {loading ? <RefreshCw className="animate-spin" size={32} /> : <>Login Now <ShieldCheck size={32} /></>}
-                        </button>
-                        <button onClick={() => setStep('phone')} className="w-full text-slate-600 hover:text-white transition-colors text-[10px] font-black uppercase tracking-[0.4em] italic">Go Back</button>
-                     </div>
-                  </motion.div>
-               )}
+                   <button 
+                     onClick={handleComplete}
+                     disabled={!name.trim() || loading}
+                     className="w-full h-28 lg:h-32 rounded-[3rem] gradient-indigo text-white font-black text-3xl uppercase tracking-tighter italic shadow-2xl shadow-indigo/20 hover:scale-[1.01] active:scale-95 transition-all flex items-center justify-center gap-4 disabled:opacity-20"
+                   >
+                      Complete Neural Sync <ArrowRight size={32} />
+                   </button>
+                </motion.div>
+              )}
+           </AnimatePresence>
+        </div>
 
-               {step === 'loading' && (
-                  <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center py-10 gap-8">
-                     <div className="w-24 h-24 rounded-[2.2rem] bg-india-green/10 flex items-center justify-center shadow-2xl animate-bounce">
-                        <ShieldCheck size={48} className="text-india-green" />
-                     </div>
-                     <div className="text-center space-y-2">
-                        <h3 className="text-white font-black text-3xl italic tracking-tighter uppercase leading-none">Authentication Success</h3>
-                        <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.5em] animate-pulse italic">Synchronizing Node...</p>
-                     </div>
-                  </motion.div>
-               )}
-            </AnimatePresence>
-         </div>
-
-         {/* Security Verification */}
-         <div className="mt-12 flex items-center justify-center gap-8 opacity-20">
-            {[ShieldCheck, Fingerprint, Lock, Landmark].map((Icon, i) => (
-               <Icon key={i} size={28} className="text-white" />
-            ))}
-         </div>
+        <div className="mt-16 flex flex-col lg:flex-row items-center justify-center gap-12 opacity-30 pointer-events-none">
+           <div className="flex items-center gap-3">
+              <Shield size={16} className="text-emerald" />
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">Persistent Node Encryption Active</span>
+           </div>
+           <div className="flex items-center gap-3">
+              <ShieldCheck size={16} className="text-emerald" />
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">Citizen Data Sovereignty Protocol</span>
+           </div>
+        </div>
       </motion.div>
-
-      {/* Footer Info */}
-      <footer className="fixed bottom-8 text-center w-full px-6 opacity-30 select-none">
-         <p className="text-[9px] font-black text-slate-700 uppercase tracking-[1em] italic leading-none">NyayaMitra Security Protocol 2024</p>
-      </footer>
     </div>
   )
 }

@@ -1,209 +1,261 @@
-import { useState, useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  Scale, Mic, FileText, Target, ArrowRight,
-  ChevronDown, MessageSquare, Scan, PlayCircle,
-  ShieldCheck, Landmark, Award
+  Scale, ShieldCheck, Globe, Zap, Database, 
+  ChevronRight, ArrowRight, PlayCircle, Menu, 
+  Lock, Activity, Gavel, Mic, FileText, BarChart3, 
+  AlertCircle, MessageSquare
 } from 'lucide-react'
-import { useNavigate, Link } from 'react-router-dom'
-
-const FEATURES = [
-  {
-    title: 'Voice Legal Counsel',
-    desc: 'Speak naturally in your language (Hindi, Marathi, etc.) and get instant legal guidance.',
-    icon: Mic,
-    color: '#ff9933',
-    link: '/counsellor'
-  },
-  {
-    title: 'Document Auditor',
-    desc: 'Upload any legal document to find hidden risks and understand complex clauses instantly.',
-    icon: Scan,
-    color: '#06b6d4',
-    link: '/decoder'
-  },
-  {
-    title: 'Smart Case Tracker',
-    desc: 'Never miss a court date. Track deadlines and limitation periods with automatic alerts.',
-    icon: Target,
-    color: '#10b981',
-    link: '/tracker'
-  },
-  {
-    title: 'Legal Forge',
-    desc: 'Generate 40+ types of professional legal documents and notices in seconds.',
-    icon: FileText,
-    color: '#7c3aed',
-    link: '/generator'
-  }
-]
-
-const STATS = [
-  { label: 'Citizen Trust', value: '1.4B+', sub: 'Built for India' },
-  { label: 'Response Time', value: '< 1s', sub: 'Instant Help' },
-  { label: 'Languages', value: '12+', sub: 'Vernacular Support' },
-  { label: 'Accuracy', value: '99%', sub: 'Legal Precision' },
-]
+import { useNavigate } from 'react-router-dom'
 
 export default function LandingPage() {
   const navigate = useNavigate()
-  const containerRef = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({ target: containerRef })
-  const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0])
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50)
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const pillars = [
+    { icon: <Mic className="text-saffron" />, name: "Voice Counsellor", desc: "Speak naturally in your language for instant advice." },
+    { icon: <FileText className="text-indigo" />, name: "Document Decoder", desc: "Scan complex legal docs for hidden traps." },
+    { icon: <Database className="text-emerald" />, name: "Case Tracker", desc: "Real-time updates from eCourts & statutes." },
+    { icon: <BarChart3 className="text-gold" />, name: "NyayaScore", desc: "Measure your legal health & risk profile." },
+  ]
 
   return (
-    <div ref={containerRef} className="bg-[#030712] min-h-screen text-white overflow-x-hidden font-display">
+    <div className="bg-navy min-h-screen text-slate-100 font-display selection:bg-saffron/30 selection:text-white">
       
-      {/* Background Ambience */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-          <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-saffron/5 blur-[150px] rounded-full opacity-50" />
-          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-accent-purple/5 blur-[120px] rounded-full opacity-50" />
+      {/* 🌌 Atmospheric Backdrop */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute top-[-10%] right-[-10%] w-[800px] h-[800px] bg-indigo/10 blur-[120px] rounded-full animate-pulse" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[800px] h-[800px] bg-saffron/10 blur-[120px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
       </div>
 
-      {/* 1. Hero Hub (Properly Centered) */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center px-6 pt-20 z-10 text-center">
-         <motion.div 
-           initial={{ opacity: 0, y: 30 }} 
-           animate={{ opacity: 1, y: 0 }} 
-           transition={{ duration: 0.8 }}
-           className="max-w-5xl space-y-10"
-         >
-            <div className="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-white/5 border border-white/10 text-saffron text-[10px] lg:text-xs font-black uppercase tracking-[0.4em]">
-               <div className="w-2 h-2 rounded-full bg-saffron animate-pulse" />
-               Empowering 1.4 Billion Indian Citizens
+      {/* 🧭 Navbar */}
+      <nav className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-500 ${scrolled ? 'glass-nav py-4' : 'py-8'}`}>
+        <div className="container mx-auto px-6 flex items-center justify-between">
+          <div className="flex items-center gap-3 cursor-pointer group" onClick={() => navigate('/')}>
+            <div className="w-10 h-10 rounded-xl gradient-saffron flex items-center justify-center shadow-lg shadow-saffron/20 group-hover:rotate-12 transition-transform">
+              <Scale size={20} className="text-white" />
             </div>
+            <span className="text-2xl font-bold tracking-tight">Nyaya<span className="text-saffron">Mitra</span></span>
+          </div>
 
-            <h1 className="text-6xl lg:text-[10rem] font-black text-white leading-[0.85] tracking-tighter italic font-display uppercase">
-               NYAYA <span className="text-gradient-saffron text-glow-saffron">MITRA</span>
-            </h1>
+          <div className="hidden lg:flex items-center gap-10">
+            {['Pillars', 'Architecture', 'Safety', 'Legislation'].map((item) => (
+              <a key={item} href={`#${item.toLowerCase()}`} className="text-sm font-medium text-slate-400 hover:text-white transition-colors uppercase tracking-widest">{item}</a>
+            ))}
+            <button 
+              onClick={() => navigate('/login')}
+              className="px-8 py-3 rounded-full gradient-saffron text-white font-bold text-sm shadow-lg shadow-saffron/20 hover:scale-105 active:scale-95 transition-all"
+            >
+              Get Started
+            </button>
+          </div>
 
-            <p className="text-xl lg:text-4xl text-slate-400 font-medium tracking-tight leading-relaxed max-w-4xl mx-auto italic">
-              AI-Powered Legal Justice for Every Indian. <br className="hidden lg:block" /> 
-              Instant. Accurate. 100% Secure.
-            </p>
+          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="lg:hidden w-10 h-10 flex items-center justify-center rounded-lg bg-white/5 border border-white/10">
+            <Menu size={20} />
+          </button>
+        </div>
+      </nav>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-10">
-               <button 
-                 onClick={() => navigate('/login')} 
-                 className="w-full sm:w-auto px-16 py-8 rounded-full gradient-primary text-white font-black uppercase text-2xl tracking-tighter italic shadow-[0_20px_80px_rgba(255,153,51,0.3)] hover:scale-110 active:scale-95 transition-all flex items-center gap-6 group"
-               >
-                  Get Started
-                  <ArrowRight size={32} className="group-hover:translate-x-2 transition-transform" />
-               </button>
-               <button className="w-full sm:w-auto px-12 py-8 rounded-full border border-white/10 bg-white/5 text-slate-300 font-black uppercase text-xl tracking-tighter italic hover:bg-white/10 transition-all">
-                  Watch Demo
-               </button>
-            </div>
-         </motion.div>
+      {/* 🚀 Hero Section */}
+      <section className="relative z-10 pt-48 pb-32 container mx-auto px-6 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="max-w-5xl mx-auto"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8 backdrop-blur-md">
+            <span className="w-2 h-2 rounded-full bg-emerald animate-pulse shadow-[0_0_10px_#10b981]" />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-emerald">Neural Legal v2.0 Platform</span>
+          </div>
+          
+          <h1 className="text-6xl md:text-8xl lg:text-9xl font-black leading-[0.9] tracking-tighter mb-8 italic uppercase">
+            Justice <span className="text-gradient-saffron">Simplified.</span><br />
+            AI <span className="text-white/20">Empowered.</span>
+          </h1>
 
-         <motion.div style={{ opacity }} className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 text-slate-500">
-            <span className="text-[10px] uppercase font-black tracking-widest italic opacity-40">Scroll to Explore Features</span>
-            <ChevronDown size={32} className="animate-bounce" />
-         </motion.div>
+          <p className="text-xl md:text-2xl text-slate-400 font-medium leading-relaxed max-w-3xl mx-auto mb-12">
+            The world's first <span className="text-white">Neural Justice Node</span> for every Indian citizen. Instant legal advice, document verification, and court tracking in your language.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <button 
+              onClick={() => navigate('/login')}
+              className="w-full sm:w-auto px-10 py-5 rounded-2xl gradient-saffron text-white font-bold text-lg shadow-2xl shadow-saffron/30 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3"
+            >
+              Start Your Consultation
+              <ArrowRight size={20} />
+            </button>
+            <button className="w-full sm:w-auto px-10 py-5 rounded-2xl glass-panel text-white font-bold text-lg hover:bg-white/10 transition-all flex items-center justify-center gap-3">
+              <PlayCircle size={20} className="text-saffron" />
+              Watch Demo
+            </button>
+          </div>
+        </motion.div>
       </section>
 
-      {/* 2. Impact Matrix */}
-      <section className="py-32 relative z-10 bg-[#030712]/60 backdrop-blur-3xl border-y border-white/5">
-         <div className="max-w-7xl mx-auto px-8">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-20">
-               {STATS.map((s, i) => (
-                 <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} key={s.label} className="text-center lg:text-left">
-                    <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] italic mb-4">{s.label}</div>
-                    <div className="text-5xl lg:text-8xl font-black text-white italic tracking-tighter drop-shadow-2xl">{s.value}</div>
-                    <div className="text-[10px] font-black text-saffron uppercase tracking-[0.2em] italic mt-2">{s.sub}</div>
-                 </motion.div>
-               ))}
-            </div>
-         </div>
+      {/* 🏛️ The 7 Pillars Grid */}
+      <section id="pillars" className="relative z-10 py-32 container mx-auto px-6">
+        <div className="text-center mb-20">
+          <h2 className="text-4xl md:text-5xl font-black mb-6 uppercase tracking-tight">The Seven <span className="text-saffron">Pillars</span></h2>
+          <p className="text-slate-400 max-w-2xl mx-auto">Comprehensive legal assistance powered by advanced RAG and distributed ledger technology.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {pillars.map((pillar, idx) => (
+            <motion.div
+              key={pillar.name}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.1 }}
+              viewport={{ once: true }}
+              className="glass-card p-8 rounded-[2.5rem] group cursor-pointer border-glow"
+            >
+              <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                {pillar.icon}
+              </div>
+              <h3 className="text-xl font-bold mb-3">{pillar.name}</h3>
+              <p className="text-sm text-slate-500 leading-relaxed">{pillar.desc}</p>
+            </motion.div>
+          ))}
+        </div>
       </section>
 
-      {/* 3. Core Capability Hub (Proper Grid Alignment) */}
-      <section className="py-48 relative z-10 px-8">
-         <div className="max-w-7xl mx-auto space-y-32">
-            <div className="text-center space-y-6">
-               <h2 className="text-6xl lg:text-[8rem] font-black text-white tracking-tighter leading-none font-display italic uppercase">Simplified Justice</h2>
-               <p className="text-slate-500 text-xs lg:text-sm font-black uppercase tracking-[0.5em] italic">Built for common citizens, complex cases, and everything in between.</p>
+      {/* 🛡️ Safety Node (Side highlight) */}
+      <section className="relative z-10 py-32 overflow-hidden">
+        <div className="container mx-auto px-6 flex flex-col lg:flex-row items-center gap-20">
+          <div className="w-full lg:w-1/2">
+            <div className="inline-block px-4 py-2 rounded-lg bg-indigo/10 border border-indigo/20 text-indigo font-bold text-xs uppercase tracking-widest mb-6">
+              Neural Security Protocol
             </div>
-
-            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
-               {FEATURES.map((f) => (
-                 <motion.div 
-                    key={f.title} 
-                    initial={{ opacity: 0, scale: 0.95 }} 
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    className="p-12 lg:p-16 rounded-[4rem] glass-diamond border-white/10 flex flex-col justify-between group relative overflow-hidden h-[450px] shadow-2xl transition-all hover:border-white/20"
-                 >
-                    <div className="space-y-8 relative z-10">
-                       <div className="w-20 h-20 rounded-3xl flex items-center justify-center border border-white/10 shadow-2xl" style={{ background: `${f.color}15` }}>
-                          <f.icon size={36} style={{ color: f.color }} />
-                       </div>
-                       <div className="space-y-4">
-                          <h3 className="text-4xl lg:text-5xl font-black text-white italic tracking-tighter uppercase font-display leading-none">{f.title}</h3>
-                          <p className="text-slate-400 text-lg lg:text-xl font-medium leading-relaxed italic opacity-85">{f.desc}</p>
-                       </div>
-                    </div>
-                    <Link to={f.link} className="relative z-10 inline-flex mt-8 self-end">
-                       <button className="h-16 px-10 rounded-full glass-card border-white/20 flex items-center gap-4 group-hover:bg-white/5 transition-all shadow-xl group/btn">
-                          <span className="text-[10px] font-black uppercase tracking-widest text-slate-300 group-hover/btn:text-white">Explore Unit</span>
-                          <ArrowRight size={20} className="text-slate-500 group-hover/btn:text-white group-hover/btn:translate-x-1" />
-                       </button>
-                    </Link>
-                    {/* Shadow Decor */}
-                    <div className="absolute -bottom-20 -right-20 w-80 h-80 opacity-5 blur-[100px] pointer-events-none rounded-full" style={{ backgroundColor: f.color }} />
-                 </motion.div>
-               ))}
+            <h2 className="text-4xl md:text-5xl font-black mb-8 leading-tight uppercase">Your Data, <span className="text-indigo">Fortified.</span></h2>
+            <div className="space-y-6">
+              {[
+                { title: "AES-256 Encryption", desc: "All legal data is encrypted client-side before reaching our nodes." },
+                { title: "Blockchain Verification", desc: "Documents are timestamped on the Polygon network for immutable proof." },
+                { title: "Zero-Knowledge Architecture", desc: "We never store your personal secrets in plaintext." }
+              ].map((feature, i) => (
+                <div key={i} className="flex gap-4">
+                  <div className="mt-1 w-6 h-6 rounded-full bg-indigo/20 flex items-center justify-center flex-shrink-0">
+                    <ShieldCheck size={14} className="text-indigo" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold mb-1">{feature.title}</h4>
+                    <p className="text-sm text-slate-500">{feature.desc}</p>
+                  </div>
+                </div>
+              ))}
             </div>
-         </div>
+          </div>
+          <div className="w-full lg:w-1/2 relative">
+             <div className="relative glass-card p-12 rounded-[3rem] border-white/5 rotate-3 overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo/10 blur-[80px] rounded-full" />
+                <div className="relative z-10 space-y-6">
+                   <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                         <div className="w-12 h-12 rounded-xl bg-indigo flex items-center justify-center">
+                            <Lock size={24} className="text-white" />
+                         </div>
+                         <div>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Node Status</span>
+                            <h4 className="font-bold text-emerald">ACTIVE_PROTECT</h4>
+                         </div>
+                      </div>
+                      <Activity size={24} className="text-slate-700" />
+                   </div>
+                   <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                      <motion.div animate={{ width: ['0%', '100%'] }} transition={{ duration: 4, repeat: Infinity }} className="h-full bg-indigo shadow-[0_0_15px_#6366f1]" />
+                   </div>
+                   <div className="grid grid-cols-2 gap-4">
+                      <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
+                         <span className="text-[8px] font-black text-slate-500 uppercase">Latency</span>
+                         <div className="text-lg font-black italic tracking-tighter">14ms</div>
+                      </div>
+                      <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
+                         <span className="text-[8px] font-black text-slate-500 uppercase">Uptime</span>
+                         <div className="text-lg font-black italic tracking-tighter">100%</div>
+                      </div>
+                   </div>
+                </div>
+             </div>
+          </div>
+        </div>
       </section>
 
-      {/* 4. Final CTA Shield */}
-      <section className="py-48 px-6 lg:px-12 relative z-10">
-         <motion.div whileInView={{ scale: [0.98, 1], opacity: [0, 1] }} className="max-w-6xl mx-auto p-20 lg:p-32 rounded-[5rem] gradient-primary text-center space-y-12 relative overflow-hidden shadow-[0_50px_150px_rgba(255,153,51,0.25)]">
-            <div className="space-y-6 relative z-10">
-               <h2 className="text-6xl lg:text-[9rem] font-black text-white tracking-tighter leading-[0.85] italic font-display uppercase">
-                  Justice for <br />
-                  <span className="text-black/40">Everyone.</span>
-               </h2>
-               <p className="text-white/80 text-xl lg:text-3xl font-medium max-w-3xl mx-auto italic leading-relaxed mt-8">
-                  No hidden fees. No complicated jargon. Just the legal help you deserve, in the language you speak.
-               </p>
+      {/* 🏁 Footer */}
+      <footer className="relative z-10 pt-32 pb-12 border-t border-white/5">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
+            <div className="col-span-2 lg:col-span-1">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-8 h-8 rounded-lg gradient-saffron flex items-center justify-center">
+                  <Scale size={16} className="text-white" />
+                </div>
+                <span className="text-xl font-bold">NyayaMitra</span>
+              </div>
+              <p className="text-sm text-slate-500 leading-relaxed mb-8 max-w-xs">
+                Empowering every citizen with high-end AI legal intelligence. Accessible, affordable, and absolute.
+              </p>
             </div>
-
-            <div className="flex justify-center relative z-10 pt-10">
-               <button 
-                 onClick={() => navigate('/login')} 
-                 className="h-28 px-16 rounded-full bg-slate-950 text-white font-black text-2xl lg:text-4xl tracking-tighter italic uppercase shadow-2xl hover:scale-110 active:scale-95 transition-all flex items-center gap-8 group"
-               >
-                  Join NyayaMitra Now
-                  <ArrowRight size={48} className="group-hover:translate-x-3 transition-transform" />
-               </button>
+            {[
+              { name: 'Product', links: ['Features', 'NyayaScore', 'Voice AI', 'Case Tracking'] },
+              { name: 'Company', links: ['About Us', 'Safety Protocol', 'Legal Ethics', 'Careers'] },
+              { name: 'Support', links: ['Documentation', 'Help Center', 'API Access', 'Contact'] }
+            ].map((col) => (
+              <div key={col.name}>
+                <h5 className="font-bold mb-6 uppercase text-xs tracking-widest text-slate-300">{col.name}</h5>
+                <ul className="space-y-4">
+                  {col.links.map((link) => (
+                    <li key={link}><a href="#" className="text-sm text-slate-500 hover:text-white transition-colors">{link}</a></li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-12 border-t border-white/5">
+            <p className="text-xs text-slate-600">© 2026 Team Return 0; All rights reserved.</p>
+            <div className="flex items-center gap-6">
+              <span className="text-xs text-slate-600 hover:text-white transition-colors cursor-pointer tracking-widest uppercase">Privacy</span>
+              <span className="text-xs text-slate-600 hover:text-white transition-colors cursor-pointer tracking-widest uppercase">Terms</span>
+              <span className="text-xs text-slate-600 hover:text-white transition-colors cursor-pointer tracking-widest uppercase">Nodes</span>
             </div>
-            
-            <div className="mt-16 flex items-center justify-center gap-12 opacity-30">
-               {[Award, ShieldCheck, Scale, Landmark].map((Icon, i) => (
-                 <Icon key={i} size={48} className="text-white grayscale" />
-               ))}
-            </div>
-         </motion.div>
-      </section>
-
-      {/* Footer Alignment */}
-      <footer className="py-24 border-t border-white/5 bg-[#030712]/80 relative z-10">
-         <div className="max-w-7xl mx-auto px-8 flex flex-col lg:flex-row justify-between items-center gap-12">
-            <div className="flex items-center gap-4">
-               <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shadow-xl">
-                  <Scale size={24} className="text-saffron" />
-               </div>
-               <span className="text-2xl font-black italic tracking-tighter uppercase font-display">NyayaMitra<span className="text-saffron">.</span></span>
-            </div>
-            <div className="flex gap-12 text-[10px] font-black uppercase tracking-[0.4em] text-slate-600 italic">
-               <span className="hover:text-white cursor-pointer transition-colors">Privacy</span>
-               <span className="hover:text-white cursor-pointer transition-colors">Terms</span>
-               <span className="hover:text-white cursor-pointer transition-colors">Support</span>
-            </div>
-         </div>
-         <p className="text-center text-slate-800 text-[11px] font-black uppercase tracking-[1em] mt-24 italic">Automated Justice System 🇮🇳 2024</p>
+          </div>
+        </div>
       </footer>
+
+      {/* 🧩 Mobile Menu */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="fixed inset-0 z-[2000] bg-navy/95 backdrop-blur-2xl p-10 flex flex-col justify-between"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-xl font-bold">Menu</span>
+              <button onClick={() => setIsMenuOpen(false)} className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5">
+                <ArrowRight className="rotate-180" size={20} />
+              </button>
+            </div>
+            <div className="space-y-8">
+              {['Home', 'Pillars', 'Safety', 'Legislation'].map((item) => (
+                <div key={item} className="text-6xl font-black uppercase italic tracking-tighter opacity-20 hover:opacity-100 transition-opacity cursor-pointer">{item}</div>
+              ))}
+            </div>
+            <button className="w-full py-6 rounded-2xl gradient-saffron text-white font-bold" onClick={() => navigate('/login')}>Initialize System</button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
+

@@ -3,18 +3,18 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Upload, Camera, ChevronDown, ChevronUp, AlertTriangle,
   CheckCircle2, XCircle, FileText, Shield, RefreshCw, Copy, Check,
-  Zap, Info, Sparkles, Scale, Search, FileDigit, ChevronRight
+  Zap, Info, Sparkles, Scale, Search, FileDigit, ChevronRight,
+  ArrowLeft, ShieldCheck, Microscope, Scan, FileSearch
 } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { cn } from '@/utils'
 import { analyzeDocumentDemo, analyzeDocumentFile, analyzeDocumentText, generateCounterClause } from '@/utils/api'
 
-const RISK_MAP: Record<string, { label: string; color: string; bg: string; border: string; Icon: React.FC<{size?:number;className?:string;color?:string}> }> = {
-  red: { label: 'CRITICAL TRAP', color: '#f87171', bg: 'rgba(239,68,68,0.08)', border: 'rgba(239,68,68,0.25)', Icon: XCircle },
-  amber: { label: 'NEGOTIATION REQ', color: '#fbbf24', bg: 'rgba(251,191,36,0.08)', border: 'rgba(251,191,36,0.25)', Icon: AlertTriangle },
-  green: { label: 'STANDARD SAFE', color: '#34d399', bg: 'rgba(52,211,153,0.08)', border: 'rgba(52,211,153,0.25)', Icon: CheckCircle2 },
+const RISK_MAP: Record<string, { label: string; color: string; bg: string; border: string; Icon: any }> = {
+  red: { label: 'CRITICAL TRAP', color: 'var(--saffron)', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.25)', Icon: AlertTriangle },
+  amber: { label: 'RISK DETECTED', color: 'var(--gold)', bg: 'rgba(251,191,36,0.08)', border: 'rgba(251,191,36,0.25)', Icon: AlertTriangle },
+  green: { label: 'STANDARD SAFE', color: 'var(--emerald)', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.25)', Icon: CheckCircle2 },
 }
-
-const item = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } } as const
 
 interface BackendClause {
   id: number
@@ -37,7 +37,7 @@ function CounterClausePanel({ clause }: { clause: BackendClause }) {
       const res = await generateCounterClause(clause.text, clause.risk_level)
       setCounter(res.counter_clause)
     } catch {
-      setCounter('Our current knowledge suggests a specific amendment protocol here. Please check with AI Counsel.')
+      setCounter('Strategic amendment required for this provision to align with BNS protocols. Use the Doc Generator for a full rewrite.')
     } finally {
       setLoading(false)
     }
@@ -52,14 +52,17 @@ function CounterClausePanel({ clause }: { clause: BackendClause }) {
   }
 
   return (
-    <div className="p-5 rounded-[2rem] bg-emerald-500/10 border border-emerald-500/20 mt-4 space-y-4 shadow-xl">
-      <div className="flex items-center justify-between">
-         <p className="text-[10px] text-emerald-400 font-extrabold uppercase tracking-widest flex items-center gap-2">
-           <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-           Neural Shield: Counter-Clause
+    <div className="p-6 rounded-3xl bg-emerald/5 border border-emerald/20 mt-6 space-y-4 shadow-xl relative overflow-hidden">
+      <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+        <ShieldCheck size={120} className="text-emerald" />
+      </div>
+      <div className="flex items-center justify-between relative z-10">
+         <p className="text-[10px] text-emerald font-black uppercase tracking-widest flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald animate-pulse" />
+            Neural Shield: Optimized Clause
          </p>
          {counter && (
-            <button onClick={copyToClipboard} className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400">
+            <button onClick={copyToClipboard} className="p-2 rounded-xl bg-emerald/10 text-emerald hover:bg-emerald/20 transition-all">
                {copied ? <Check size={14} /> : <Copy size={14} />}
             </button>
          )}
@@ -68,16 +71,16 @@ function CounterClausePanel({ clause }: { clause: BackendClause }) {
         <button
           onClick={fetchCounter}
           disabled={loading}
-          className="w-full py-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-black uppercase text-[11px] tracking-widest hover:bg-emerald-500/20 transition-all disabled:opacity-50 flex items-center justify-center gap-3"
+          className="w-full py-4 rounded-2xl bg-emerald/10 border border-emerald/30 text-emerald font-black uppercase text-[11px] tracking-widest hover:bg-emerald/20 transition-all disabled:opacity-50 flex items-center justify-center gap-3 relative z-10"
         >
-          {loading ? <RefreshCw size={16} className="animate-spin" /> : <Shield size={16} />}
+          {loading ? <RefreshCw size={16} className="animate-spin" /> : <Sparkles size={16} />}
           {loading ? 'AI Neural Reasoning...' : 'Deploy AI Counter-Clause'}
         </button>
       ) : (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-3">
-          <p className="text-emerald-200 text-sm leading-relaxed italic font-medium">"{counter}"</p>
-          <div className="p-3 bg-emerald-500/5 rounded-xl border border-emerald-500/10 text-[9px] text-emerald-400 uppercase font-black tracking-widest text-center">
-             Verified Admissible under Indian Code 🇮🇳
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4 relative z-10">
+          <p className="text-emerald/80 text-sm italic leading-relaxed font-medium">"{counter}"</p>
+          <div className="p-3 bg-emerald/5 rounded-xl border border-emerald/10 text-[9px] text-emerald/60 uppercase font-black tracking-widest text-center">
+             Verified Admissible under Bharatiya Nyaya Sanhita 🇮🇳
           </div>
         </motion.div>
       )}
@@ -85,41 +88,37 @@ function CounterClausePanel({ clause }: { clause: BackendClause }) {
   )
 }
 
-function ClauseCard({ clause, index }: { clause: BackendClause; index: number }) {
+function ClauseCard({ clause }: { clause: BackendClause }) {
   const [expanded, setExpanded] = useState(false)
   const risk = RISK_MAP[clause.risk_level] || RISK_MAP.green
-  const { Icon } = risk
+  const Icon = risk.Icon
 
   return (
     <motion.div
       layout
-      variants={item}
-      className="rounded-[2.5rem] overflow-hidden border transition-all duration-300 group hover:shadow-2xl"
-      style={{ borderColor: risk.border, backgroundColor: risk.bg }}
+      className="rounded-3xl overflow-hidden border border-white/5 transition-all duration-300 group hover:shadow-2xl glass-card border-glow"
+      style={{ background: risk.bg }}
     >
-      <button onClick={() => setExpanded(!expanded)} className="w-full p-6 text-left relative overflow-hidden">
-        <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-all scale-150 rotate-12">
-           <Icon size={64} color={risk.color} />
-        </div>
-        <div className="flex items-start gap-5 relative z-10">
-          <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-lg border-2 border-white/5" style={{ backgroundColor: `${risk.color}15` }}>
-             <Icon size={24} color={risk.color} />
+      <button onClick={() => setExpanded(!expanded)} className="w-full p-6 lg:p-8 text-left relative">
+        <div className="flex items-start gap-6 relative z-10">
+          <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-lg border border-white/5" style={{ background: `${risk.color}15`, color: risk.color }}>
+             <Icon size={24} />
           </div>
           <div className="flex-1 min-w-0 pr-4">
             <div className="flex items-center gap-3 mb-3">
-               <span className="text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1 rounded-lg border shadow-sm"
-                 style={{ color: risk.color, backgroundColor: risk.bg, borderColor: risk.border }}>
+               <span className="text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-lg border shadow-sm"
+                 style={{ color: risk.color, background: `${risk.color}10`, borderColor: `${risk.color}20` }}>
                  {risk.label}
                </span>
                {clause.ipc_warnings.length > 0 && (
-                 <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-[10px] font-black uppercase tracking-widest animate-pulse">
-                    <Zap size={12} /> BNS Warning
+                 <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-saffron/10 border border-saffron/30 text-saffron text-[9px] font-black uppercase tracking-widest animate-pulse">
+                    <Zap size={10} /> BNS Alert
                  </div>
                )}
             </div>
             <p className={cn("text-slate-200 text-base font-medium leading-relaxed transition-all", !expanded && "line-clamp-2")}>{clause.text}</p>
           </div>
-          <div className="mt-2 text-slate-500 group-hover:text-white transition-colors">
+          <div className="mt-2 text-slate-600 group-hover:text-white transition-colors">
             {expanded ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
           </div>
         </div>
@@ -133,39 +132,36 @@ function ClauseCard({ clause, index }: { clause: BackendClause; index: number })
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden"
           >
-            <div className="px-8 pb-8 space-y-6 border-t border-white/5 pt-6">
-              <div className="grid lg:grid-cols-2 gap-6">
+            <div className="px-8 lg:px-10 pb-10 space-y-8 border-t border-white/5 pt-8">
+              <div className="grid lg:grid-cols-2 gap-8">
                  <div>
-                    <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center gap-2 mb-4">
                        <Info size={14} className="text-slate-600" />
-                       <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest">Legal Analysis</p>
+                       <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest">Neural Analysis</p>
                     </div>
-                    <p className="text-sm lg:text-base text-slate-300 leading-relaxed font-medium">{clause.explanation}</p>
+                    <p className="text-base text-slate-400 leading-relaxed font-normal">{clause.explanation}</p>
                  </div>
-                 <div className="p-6 rounded-[2rem] bg-[#030712]/50 border border-white/10 shadow-inner">
-                    <div className="flex items-center gap-2 mb-3">
+                 <div className="p-6 rounded-3xl bg-[#030712]/50 border border-white/5 shadow-inner">
+                    <div className="flex items-center gap-2 mb-4">
                        <Scale size={14} className="text-slate-600" />
-                       <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Statutory Basis</p>
+                       <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Legal Precedent</p>
                     </div>
-                    <p className="text-sm text-slate-400 italic">"{clause.legal_basis}"</p>
+                    <p className="text-sm text-slate-500 italic leading-relaxed">"{clause.legal_basis}"</p>
                  </div>
               </div>
 
               {clause.ipc_warnings.map((w, i) => (
-                <div key={i} className="p-6 rounded-[2rem] bg-red-500/5 border border-red-500/20 shadow-xl relative overflow-hidden">
-                  <div className="absolute top-0 right-0 p-4 opacity-10">
-                     <FileDigit size={48} className="text-red-500" />
-                  </div>
-                  <div className="flex items-center gap-3 mb-3">
-                     <AlertTriangle size={16} className="text-red-500" />
-                     <p className="text-red-500 font-extrabold text-[11px] uppercase tracking-widest">Outdated Statute Detection</p>
+                <div key={i} className="p-6 rounded-3xl bg-saffron/5 border border-saffron/10 shadow-xl relative overflow-hidden">
+                  <div className="flex items-center gap-3 mb-4">
+                     <AlertTriangle size={16} className="text-saffron" />
+                     <p className="text-saffron font-black text-[10px] uppercase tracking-widest">Outdated Statute Detected</p>
                   </div>
                   <div className="flex items-center gap-4">
-                     <div className="px-3 py-1.5 rounded-xl bg-red-500/10 border border-red-500/30 text-slate-400 line-through text-xs font-black">{w.old}</div>
-                     <span className="text-red-500">→</span>
-                     <div className="px-3 py-1.5 rounded-xl bg-india-green/10 border border-india-green/30 text-india-green text-xs font-black">{w.new}</div>
+                     <div className="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-600 line-through text-xs font-bold">{w.old}</div>
+                     <ArrowRight size={14} className="text-slate-700" />
+                     <div className="px-3 py-1.5 rounded-xl bg-emerald/10 border border-emerald/30 text-emerald text-xs font-black">{w.new}</div>
                   </div>
-                  <p className="text-slate-400 text-xs mt-3 font-medium leading-relaxed">{w.note}</p>
+                  <p className="text-slate-500 text-xs mt-4 font-medium leading-relaxed italic">{w.note}</p>
                 </div>
               ))}
 
@@ -179,6 +175,7 @@ function ClauseCard({ clause, index }: { clause: BackendClause; index: number })
 }
 
 export default function DocumentDecoderPage() {
+  const navigate = useNavigate()
   const [stage, setStage] = useState<'upload' | 'analyzing' | 'results'>('upload')
   const [progress, setProgress] = useState(0)
   const [analysisResult, setAnalysisResult] = useState<any>(null)
@@ -194,7 +191,7 @@ export default function DocumentDecoderPage() {
     setProgress(0)
 
     const interval = setInterval(() => {
-      setProgress(p => Math.min(p + 2, 92))
+      setProgress(p => Math.min(p + 2, 95))
     }, 100)
 
     try {
@@ -205,9 +202,9 @@ export default function DocumentDecoderPage() {
         setAnalysisResult(result)
         setStage('results')
       }, 500)
-    } catch (err: any) {
+    } catch {
       clearInterval(interval)
-      setError(err.message || 'RAG Analysis disconnected. Re-trying demo layer...')
+      setError('Audit pipeline disconnected. Please try the demo mode or re-upload.')
       setStage('upload')
     }
   }, [])
@@ -229,246 +226,189 @@ export default function DocumentDecoderPage() {
   const amberCount = clauses.filter(c => c.risk_level === 'amber').length
   const greenCount = clauses.filter(c => c.risk_level === 'green').length
 
-  const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } } as const
-
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="px-6 lg:px-12 py-10 max-w-7xl mx-auto w-full min-h-screen">
-      
-      {/* ── Header System ── */}
-      <motion.div variants={item} className="mb-10 lg:mb-16">
-         <div className="flex items-center gap-4 mb-4">
-            <div className="w-14 h-14 rounded-3xl gradient-primary glow-saffron flex items-center justify-center">
-               <FileDigit size={32} className="text-white" />
-            </div>
-            <div>
-               <h1 className="text-4xl lg:text-6xl font-black text-white tracking-tighter font-display leading-none italic uppercase">Neural Audit</h1>
-               <div className="flex items-center gap-3 mt-2">
-                  <div className="w-2 h-2 rounded-full bg-accent-cyan shadow-[0_0_8px_#06b6d4] animate-pulse" />
-                  <p className="text-[10px] lg:text-xs font-black text-slate-500 uppercase tracking-[0.25em]">Autonomous Legal Intelligence V1.4</p>
-               </div>
-            </div>
-         </div>
-      </motion.div>
-
-      <AnimatePresence mode="wait">
-        {/* ── Upload Stage ── */}
-        {stage === 'upload' && (
-          <motion.div key="upload" variants={item} className="grid lg:grid-cols-12 gap-10">
-            <div className="lg:col-span-8 space-y-8">
-              {error && (
-                <div className="p-5 rounded-[2rem] bg-red-500/10 border border-red-500/25 text-red-400 font-bold text-sm tracking-tight flex items-center gap-4">
-                  <AlertTriangle size={20} /> {error}
-                </div>
-              )}
-
-              {!textMode ? (
-                <motion.div
-                  onDragOver={e => { e.preventDefault(); setDragOver(true) }}
-                  onDragLeave={() => setDragOver(false)}
-                  onDrop={handleDrop}
-                  onClick={() => fileInputRef.current?.click()}
-                  className={cn(
-                    'border-2 border-dashed rounded-[3rem] p-16 lg:p-24 text-center cursor-pointer transition-all duration-500 group relative overflow-hidden h-full flex flex-col items-center justify-center',
-                    dragOver
-                      ? 'border-accent-cyan/70 bg-accent-cyan/10 scale-[1.02]'
-                      : 'border-white/10 hover:border-accent-cyan/40 hover:bg-white/[0.02]'
-                  )}
-                >
-                  <div className="absolute inset-0 pointer-events-none opacity-20 group-hover:opacity-40 transition-opacity">
-                     <div className="absolute top-0 left-0 w-64 h-64 bg-accent-cyan blur-[120px] rounded-full" />
-                  </div>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    className="hidden"
-                    accept=".pdf,.jpg,.jpeg,.png,.txt,.doc,.docx"
-                    onChange={e => e.target.files?.[0] && handleFile(e.target.files[0])}
-                  />
-                  <div className="w-24 h-24 lg:w-32 lg:h-32 rounded-full bg-accent-cyan/10 border border-accent-cyan/20 flex items-center justify-center mb-8 relative z-10 group-hover:scale-110 transition-transform">
-                    <Upload size={48} className="text-accent-cyan group-hover:rotate-12 transition-transform" />
-                  </div>
-                  <h3 className="text-3xl font-black text-white tracking-tighter font-display mb-4 relative z-10 uppercase italic">Ingest Document</h3>
-                  <p className="text-slate-500 text-sm lg:text-lg font-medium max-w-md relative z-10 leading-relaxed">PDF, JPG, PNG — Rent Agreements, Contracts, or Legal Notices</p>
-                  <div className="mt-8 px-6 py-2 rounded-full bg-accent-cyan/10 border border-accent-cyan/30 text-[10px] font-black text-accent-cyan uppercase tracking-[0.3em] relative z-10">Neural Scanner Standby</div>
-                </motion.div>
-              ) : (
-                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-2xl font-black tracking-tighter text-white font-display italic uppercase">Paste Raw Transcript</h2>
-                    <button onClick={() => setTextMode(false)} className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-black text-slate-500 uppercase tracking-widest hover:text-white transition-all">← Cancel</button>
-                  </div>
-                  <textarea
-                    value={pastedText}
-                    onChange={e => setPastedText(e.target.value)}
-                    placeholder="Paste your contract, legal notice, or clause text here..."
-                    className="w-full h-96 p-8 rounded-[2.5rem] bg-[#030712] border border-white/5 text-slate-200 text-lg lg:text-xl font-medium placeholder-slate-800 resize-none focus:outline-none focus:border-accent-cyan/40 transition-all shadow-[inset_0_5px_20px_rgba(0,0,0,0.5)]"
-                  />
-                  <button
-                    onClick={handleTextAnalysis}
-                    disabled={!pastedText.trim()}
-                    className="w-full py-6 rounded-[2rem] gradient-primary glow-saffron text-white font-black uppercase text-xl tracking-tighter italic disabled:opacity-20 transition-all hover:scale-[1.02] active:scale-95"
-                  >
-                    Ingest Reasoning Loop →
-                  </button>
-                </motion.div>
-              )}
-            </div>
-
-            <div className="lg:col-span-4 space-y-8">
-               <div className="grid gap-4">
-                  <button onClick={handleDemo} className="w-full p-8 rounded-[2.5rem] bg-white/5 border border-white/10 hover:border-accent-cyan/30 text-left transition-all group hover:scale-[1.02] active:scale-95">
-                     <Camera size={32} className="text-accent-cyan mb-4 group-hover:scale-110 transition-transform" />
-                     <h4 className="text-xl font-black text-white tracking-tighter font-display italic uppercase">Try Neural Demo</h4>
-                     <p className="text-slate-500 text-xs font-medium mt-2 leading-relaxed">Sample simulated RAG crawl through a Pune Rent Agreement.</p>
-                  </button>
-                  <button onClick={() => setTextMode(true)} className="w-full p-8 rounded-[2.5rem] bg-white/5 border border-white/10 hover:border-accent-purple/30 text-left transition-all group hover:scale-[1.02] active:scale-95">
-                     <Search size={32} className="text-accent-purple mb-4 group-hover:scale-110 transition-transform" />
-                     <h4 className="text-xl font-black text-white tracking-tighter font-display italic uppercase">Deep Scan Clause</h4>
-                     <p className="text-slate-500 text-xs font-medium mt-2 leading-relaxed">Copy-paste a single clause for isolated high-confidence audit.</p>
-                  </button>
-               </div>
-
-               <div className="p-8 rounded-[2.5rem] bg-[#030712]/50 border border-white/5 space-y-8">
-                  <div className="flex items-center gap-2">
-                     <Sparkles size={16} className="text-saffron" />
-                     <h5 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">AI Core Capabilities</h5>
-                  </div>
-                  {[
-                    { icon: '⚖️', label: 'BNS v1.0 Mapping', sub: 'CrPC/IPC citations real-time check' },
-                    { icon: '🛡️', label: 'RAG Verification', sub: 'Verified across 1.7M Indian statutes' },
-                    { icon: '🪤', label: 'Trap Extraction', sub: 'Auto-identify liability loopholes' }
-                  ].map(feat => (
-                    <div key={feat.label} className="flex gap-4">
-                       <span className="text-2xl shrink-0">{feat.icon}</span>
-                       <div>
-                          <p className="text-slate-100 font-bold text-sm tracking-tight">{feat.label}</p>
-                          <p className="text-[10px] text-slate-500 font-bold uppercase mt-1">{feat.sub}</p>
-                       </div>
-                    </div>
-                  ))}
-               </div>
-            </div>
-          </motion.div>
-        )}
-
-        {/* ── Analyzing Stage ── */}
-        {stage === 'analyzing' && (
-          <motion.div key="analyzing" className="flex flex-col items-center justify-center py-32 space-y-12">
-            <div className="relative w-48 h-48 lg:w-64 lg:h-64">
-              <div className="absolute inset-0 rounded-full border-8 border-white/5" />
-              <svg className="w-full h-full -rotate-90 absolute inset-0">
-                <circle cx="50%" cy="50%" r="46%" fill="none" stroke="#06b6d4" strokeWidth="12"
-                  strokeDasharray={`${progress * 2.89}% 289%`} strokeLinecap="round" className="transition-all duration-100" />
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-accent-cyan font-black text-4xl lg:text-6xl tracking-tighter font-display">{Math.round(progress)}%</span>
+    <div className="min-h-screen bg-[#030712] text-white flex flex-col font-display selection:bg-indigo/30">
+      {/* 🧭 Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 glass-nav border-b border-white/5">
+        <div className="container mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button onClick={() => navigate('/')} className="p-2 hover:bg-white/5 rounded-xl transition-all">
+              <ArrowLeft size={20} className="text-slate-400" />
+            </button>
+            <div className="h-8 w-px bg-white/10" />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl gradient-indigo flex items-center justify-center shadow-lg shadow-indigo/20">
+                <FileSearch size={20} className="text-white" />
+              </div>
+              <div>
+                <h1 className="text-sm font-black uppercase tracking-widest italic leading-none">Document Decoder</h1>
+                <p className="text-[10px] text-indigo font-bold uppercase tracking-tighter mt-1">Audit Protocol V4.2</p>
               </div>
             </div>
-            <div className="text-center space-y-6">
-              <h3 className="text-3xl lg:text-4xl font-black text-white italic uppercase tracking-tighter">Running Neural Audit</h3>
-              <div className="flex gap-4 justify-center flex-wrap">
-                {['Statute Retrieval', 'Contextual Parsing', 'Risk Grading', 'Counter-Strategy'].map((s, i) => (
-                  <motion.div key={s} 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: progress > i * 25 ? 1 : 0.3, y: 0 }}
-                    transition={{ delay: i * 0.2 }}
+          </div>
+          <div className="hidden lg:flex items-center gap-4 bg-white/2 border border-white/5 px-5 py-2 rounded-full">
+            <Microscope size={14} className="text-indigo" />
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Scanning 1.7M+ Indian Statutes</span>
+          </div>
+        </div>
+      </header>
+
+      <main className="flex-1 container mx-auto px-6 max-w-6xl pt-32 pb-20">
+        <AnimatePresence mode="wait">
+          {stage === 'upload' && (
+            <motion.div key="upload" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="grid lg:grid-cols-12 gap-10">
+              <div className="lg:col-span-8 space-y-8">
+                {error && (
+                  <div className="p-6 rounded-3xl bg-saffron/10 border border-saffron/20 text-saffron font-bold text-sm flex items-center gap-4">
+                    <AlertTriangle size={20} /> {error}
+                  </div>
+                )}
+
+                {!textMode ? (
+                  <div
+                    onDragOver={e => { e.preventDefault(); setDragOver(true) }}
+                    onDragLeave={() => setDragOver(false)}
+                    onDrop={handleDrop}
+                    onClick={() => fileInputRef.current?.click()}
                     className={cn(
-                      'text-[10px] lg:text-xs px-5 py-2.5 rounded-2xl border font-black uppercase tracking-widest transition-all',
-                      progress > i * 25
-                        ? 'bg-accent-cyan/10 border-accent-cyan/30 text-accent-cyan shadow-[0_0_15px_#06b6d430]'
-                        : 'bg-white/2 border-white/10 text-slate-700'
+                      'border-2 border-dashed rounded-[3rem] p-12 lg:p-24 text-center cursor-pointer transition-all duration-500 group relative overflow-hidden bg-white/2',
+                      dragOver ? 'border-indigo bg-indigo/5 scale-[1.01]' : 'border-white/10 hover:border-indigo/40'
                     )}
                   >
-                    {progress > i * 25 ? '✓' : '○'} {s}
-                  </motion.div>
-                ))}
-              </div>
-              <p className="text-slate-500 text-sm italic font-medium px-4">Processing with 1536-dim vector embeddings across Indian Code...</p>
-            </div>
-          </motion.div>
-        )}
-
-        {/* ── Results Stage ── */}
-        {stage === 'results' && analysisResult && (
-          <motion.div key="results" variants={container} className="space-y-10 lg:space-y-16">
-            <motion.div variants={item} className="grid lg:grid-cols-12 gap-10">
-               
-               {/* Left: Summary Analytics */}
-               <div className="lg:col-span-4 space-y-6">
-                  <div className="p-8 lg:p-12 rounded-[3.5rem] bg-slate-900 shadow-2xl border border-white/5 relative overflow-hidden h-full flex flex-col justify-between">
-                     <div className="absolute top-0 right-0 p-10 opacity-10">
-                        <Scale size={120} className="text-white" />
-                     </div>
-                     <div className="relative z-10">
-                        <div className="flex items-center justify-between mb-8">
-                           <h2 className="text-white font-black text-2xl tracking-tighter italic uppercase font-display">Scan Report</h2>
-                           <button onClick={() => { setStage('upload'); setAnalysisResult(null) }} className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-500 hover:text-white transition-all"><RefreshCw size={16} /></button>
-                        </div>
-                        <div className="space-y-8">
-                           <div>
-                              <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Audit Identity</div>
-                              <h3 className="text-white font-black text-2xl lg:text-3xl tracking-tight line-clamp-1">{analysisResult.title}</h3>
-                           </div>
-                           <div className="grid grid-cols-3 gap-3">
-                              {[
-                                { count: redCount, label: 'Trap', color: '#ef4444' },
-                                { count: amberCount, label: 'Risk', color: '#f59e0b' },
-                                { count: greenCount, label: 'Safe', color: '#10b981' }
-                              ].map(stat => (
-                                <div key={stat.label} className="p-4 rounded-3xl bg-white/2 border border-white/5 text-center">
-                                   <div className="text-2xl font-black font-display mb-1" style={{ color: stat.color }}>{stat.count}</div>
-                                   <div className="text-[8px] font-black uppercase tracking-widest text-slate-500">{stat.label}</div>
-                                </div>
-                              ))}
-                           </div>
-                        </div>
-                     </div>
-                     <div className="relative z-10 pt-10">
-                        <div className="flex justify-between items-end mb-4">
-                           <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Safety Quotient</span>
-                           <span className="text-3xl font-black text-accent-cyan font-display">{summary?.risk_score}/100</span>
-                        </div>
-                        <div className="h-2 rounded-full bg-white/5 overflow-hidden border border-white/5 p-0.5">
-                           <motion.div initial={{ width: 0 }} animate={{ width: `${summary?.risk_score}%` }} transition={{ duration: 1 }} className="h-full rounded-full bg-accent-cyan shadow-[0_0_10px_#06b6d460]" />
-                        </div>
-                        <p className="text-[11px] text-slate-500 font-bold italic mt-4 leading-relaxed line-clamp-2">"NyayaMitra Verdict: {summary?.verdict}"</p>
-                     </div>
+                    <input ref={fileInputRef} type="file" className="hidden" onChange={e => e.target.files?.[0] && handleFile(e.target.files[0])} />
+                    <div className="w-24 h-24 lg:w-32 lg:h-32 rounded-full bg-indigo/10 border border-indigo/20 flex items-center justify-center mx-auto mb-8 transition-transform group-hover:scale-110">
+                      <Scan size={48} className="text-indigo group-hover:rotate-12 transition-transform" />
+                    </div>
+                    <h3 className="text-3xl lg:text-5xl font-black tracking-tighter uppercase italic mb-4 font-display">Scan Document</h3>
+                    <p className="text-slate-500 text-lg font-medium max-w-md mx-auto leading-relaxed">Drop your PDF, Rent Agreement, or Contract for a Neural Audit.</p>
                   </div>
-               </div>
-
-               {/* Right: Clause Ledger */}
-               <div className="lg:col-span-8 space-y-6">
-                  <div className="flex items-center justify-between mb-4">
-                     <h3 className="text-white font-black text-sm lg:text-xl italic uppercase tracking-widest">Digital Clause Ledger</h3>
-                     <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-black text-slate-500 uppercase tracking-widest">{clauses.length} Segments Identified</span>
-                  </div>
+                ) : (
                   <div className="space-y-6">
-                     {clauses.map((clause, i) => (
-                       <ClauseCard key={clause.id} clause={clause} index={i} />
-                     ))}
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-2xl font-black tracking-tighter italic uppercase font-display">Deep Scan Mode</h2>
+                      <button onClick={() => setTextMode(false)} className="text-slate-500 hover:text-white transition-colors uppercase text-[10px] font-black tracking-widest">Cancel</button>
+                    </div>
+                    <textarea
+                      value={pastedText}
+                      onChange={e => setPastedText(e.target.value)}
+                      placeholder="Paste clause text here..."
+                      className="w-full h-80 p-8 rounded-[2rem] bg-black/40 border border-white/5 text-slate-200 text-xl font-medium focus:outline-none focus:border-indigo/40 transition-all font-display"
+                    />
+                    <button onClick={handleTextAnalysis} disabled={!pastedText.trim()} className="w-full py-6 rounded-2xl gradient-indigo text-white font-black uppercase text-xl tracking-tighter italic shadow-xl shadow-indigo/20 transition-all hover:scale-[1.02] active:scale-95">Initiate Analysis Loop</button>
                   </div>
-               </div>
+                )}
+              </div>
 
+              <div className="lg:col-span-4 space-y-6">
+                <button onClick={handleDemo} className="w-full p-8 rounded-[2.5rem] glass-card border-white/5 hover:border-saffron/30 text-left transition-all group border-glow">
+                   <Camera size={32} className="text-saffron mb-4 group-hover:scale-110 transition-transform" />
+                   <h4 className="text-xl font-black tracking-tighter uppercase italic font-display">Trial Protocol</h4>
+                   <p className="text-slate-500 text-[11px] font-bold uppercase mt-2">Audit a Pune Rent Agreement</p>
+                </button>
+                <div className="p-8 rounded-[2.5rem] glass-panel border border-white/5 space-y-6">
+                  <h5 className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Neural Capabilities</h5>
+                  {[
+                    { icon: Shield, label: 'Trap Extraction', color: 'var(--saffron)' },
+                    { icon: Scale, label: 'BNS v1.0 Mapping', color: 'var(--indigo)' },
+                    { icon: ShieldCheck, label: 'RAG Verification', color: 'var(--emerald)' }
+                  ].map(f => (
+                    <div key={f.label} className="flex items-center gap-4">
+                      <f.icon size={18} style={{ color: f.color }} />
+                      <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{f.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </motion.div>
+          )}
 
-            {/* Action Matrix */}
-            <motion.div variants={item} className="p-10 lg:p-16 rounded-[4rem] bg-gradient-to-br from-[#030712] to-slate-900 border border-white/10 shadow-2xl relative overflow-hidden">
-               <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-saffron/10 blur-[150px] rounded-full pointer-events-none" />
-               <div className="flex flex-col lg:flex-row items-center justify-between gap-10 relative z-10 text-center lg:text-left">
-                  <div className="space-y-6 max-w-2xl">
-                     <div className="px-4 py-1 rounded-xl bg-saffron/10 border border-saffron/20 inline-block text-[10px] font-black text-saffron uppercase tracking-[0.3em] font-sans">Strategic Recourse</div>
-                     <h4 className="text-4xl lg:text-6xl font-black text-white tracking-tighter leading-none font-display italic uppercase">Ready for Counter-Action?</h4>
-                     <p className="text-lg lg:text-xl text-slate-400 font-medium leading-relaxed">Based on this audit, we've prepared 3 specific legal notices you should issue to secure your rights.</p>
+          {stage === 'analyzing' && (
+            <motion.div key="analyzing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center py-32 space-y-12">
+              <div className="relative w-48 h-48 lg:w-64 lg:h-64">
+                <div className="absolute inset-0 rounded-full border-8 border-white/5" />
+                <svg className="w-full h-full -rotate-90 absolute inset-0">
+                  <circle cx="50%" cy="50%" r="46%" fill="none" stroke="var(--indigo)" strokeWidth="12" strokeDasharray={`${progress * 2.89}% 289%`} strokeLinecap="round" className="transition-all duration-100" />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-indigo font-black text-4xl lg:text-6xl tracking-tighter font-display italic">{Math.round(progress)}%</span>
+                </div>
+              </div>
+              <div className="text-center space-y-4">
+                <h3 className="text-3xl font-black italic uppercase tracking-tighter font-display">Neural Core Audit</h3>
+                <p className="text-slate-500 text-sm font-medium tracking-wide">Processing legal vectors through 1.7M statutory nodes...</p>
+              </div>
+            </motion.div>
+          )}
+
+          {stage === 'results' && analysisResult && (
+            <motion.div key="results" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-12">
+              <div className="grid lg:grid-cols-12 gap-10">
+                <div className="lg:col-span-4">
+                  <div className="glass-card p-10 rounded-[3rem] border-white/5 space-y-10 border-glow h-full flex flex-col justify-between">
+                    <div>
+                      <div className="flex justify-between items-start mb-8">
+                        <h2 className="text-2xl font-black italic uppercase tracking-tighter font-display">Audit Result</h2>
+                        <button onClick={() => setStage('upload')} className="p-2 rounded-xl bg-white/5 hover:text-indigo transition-colors"><RefreshCw size={16} /></button>
+                      </div>
+                      <div className="space-y-6">
+                        <h3 className="text-3xl font-black tracking-tight leading-none text-indigo">{analysisResult.title}</h3>
+                        <div className="grid grid-cols-3 gap-3">
+                          {[
+                            { val: redCount, label: 'Traps', color: 'var(--saffron)' },
+                            { val: amberCount, label: 'Risks', color: 'var(--gold)' },
+                            { val: greenCount, label: 'Safe', color: 'var(--emerald)' }
+                          ].map(s => (
+                            <div key={s.label} className="text-center p-4 rounded-2xl bg-white/2 border border-white/5">
+                              <p className="text-2xl font-black font-display" style={{ color: s.color }}>{s.val}</p>
+                              <p className="text-[8px] font-black uppercase text-slate-500 tracking-widest">{s.label}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="pt-10 space-y-4">
+                      <div className="flex justify-between items-center text-[10px] font-black uppercase text-slate-500 tracking-widest">
+                        <span>Protection Score</span>
+                        <span className="text-2xl font-black text-indigo italic font-display">{summary?.risk_score}/100</span>
+                      </div>
+                      <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
+                        <motion.div initial={{ width: 0 }} animate={{ width: `${summary?.risk_score}%` }} className="h-full bg-indigo shadow-lg shadow-indigo/20" />
+                      </div>
+                      <p className="text-[11px] text-slate-500 font-medium italic mt-4 opacity-70 leading-relaxed">"Verdict: {summary?.verdict}"</p>
+                    </div>
                   </div>
-                  <button onClick={() => window.location.href = '/generator'} className="px-10 py-6 rounded-full gradient-primary glow-saffron text-white font-black uppercase text-xl tracking-tighter italic flex items-center gap-6 transition-all hover:scale-105 active:scale-95 group">
-                     Begin Document Drafting
-                     <ChevronRight size={28} className="transition-all group-hover:translate-x-2" />
+                </div>
+
+                <div className="lg:col-span-8 space-y-6">
+                   <div className="flex items-center justify-between px-4">
+                      <h3 className="text-[11px] font-black uppercase text-slate-600 tracking-widest">Neural Clause Ledger</h3>
+                      <span className="text-[11px] text-indigo font-black uppercase">{clauses.length} Segments Identified</span>
+                   </div>
+                   <div className="space-y-6">
+                      {clauses.map((clause) => (
+                        <ClauseCard key={clause.id} clause={clause} />
+                      ))}
+                   </div>
+                </div>
+              </div>
+
+              <div className="glass-card p-12 rounded-[3.5rem] border border-white/5 overflow-hidden border-glow relative">
+                <div className="absolute top-0 right-0 w-96 h-96 bg-indigo/5 blur-[100px] rounded-full" />
+                <div className="flex flex-col lg:flex-row items-center justify-between gap-10 relative z-10">
+                  <div className="space-y-4 max-w-xl">
+                    <h4 className="text-4xl font-black italic uppercase font-display text-white">Strategic Recourse</h4>
+                    <p className="text-slate-400 text-lg leading-relaxed">Analysis complete. Your rights can be secured by issuing formal notices. Begin drafting your response now.</p>
+                  </div>
+                  <button onClick={() => navigate('/generator')} className="px-10 py-6 rounded-2xl gradient-indigo text-white font-black uppercase text-xl shadow-2xl shadow-indigo/20 transition-all hover:scale-105 active:scale-95 flex items-center gap-4 italic group">
+                    Begin Document Drafting
+                    <ChevronRight size={24} className="group-hover:translate-x-1 transition-transform" />
                   </button>
-               </div>
+                </div>
+              </div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
+          )}
+        </AnimatePresence>
+      </main>
+    </div>
   )
 }

@@ -1,407 +1,235 @@
 import { useNavigate } from 'react-router-dom'
-import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   Mic, FileSearch, FileText, Bell, Scale, Shield,
   TrendingUp, Clock, ChevronRight, Zap, Star,
   AlertCircle, CheckCircle2, ArrowRight, MessageSquare,
-  Brain, Award, Phone, Info, LayoutGrid, Sparkles
+  Brain, Award, Phone, Info, LayoutGrid, Sparkles, ShieldCheck,
+  ZapOff, Activity, Gavel, Handshake, Search, ArrowUpRight,
+  Radar, History
 } from 'lucide-react'
 import { useAppStore } from '@/store/appStore'
 import { LANGUAGES, SAMPLE_AMENDMENTS, SAMPLE_CASES, formatDate, daysUntil } from '@/utils'
-import { cn } from '@/utils'
 import { useState, useEffect } from 'react'
 
-const QUICK_ACTIONS = [
-  { id: 'counsellor', path: '/counsellor', icon: MessageSquare, label: 'Neural Counsel', sublabel: 'Type or Speak AI Advisory', color: '#ff9933', glow: 'rgba(255,153,51,0.5)', bg: 'rgba(255,153,51,0.1)' },
-  { id: 'decoder', path: '/decoder', icon: FileSearch, label: 'Document Decoder', sublabel: 'AI-Audit Clause Risks', color: '#06b6d4', glow: 'rgba(6,182,212,0.5)', bg: 'rgba(6,182,212,0.1)' },
-  { id: 'generator', path: '/generator', icon: FileText, label: 'Court Generator', sublabel: 'Ready Legal Drafting', color: '#7c3aed', glow: 'rgba(124,58,237,0.5)', bg: 'rgba(124,58,237,0.1)' },
-  { id: 'amendments', path: '/amendments', icon: Bell, label: 'Gazette Feed', sublabel: 'Live Law Intelligence', color: '#10b981', glow: 'rgba(16,185,129,0.5)', bg: 'rgba(16,185,129,0.1)' },
-  { id: 'cases', path: '/cases', icon: Scale, label: 'Legal Docket', sublabel: 'AI Case Tracking Engine', color: '#f59e0b', glow: 'rgba(245,158,11,0.5)', bg: 'rgba(245,158,11,0.1)' },
-  { id: 'negotiate', path: '/negotiate', icon: Shield, label: 'Battle Coach', sublabel: 'AI Negotiation Training', color: '#ec4899', glow: 'rgba(236,72,153,0.5)', bg: 'rgba(236,72,153,0.1)' },
+const PILLARS = [
+  { id: 'counsellor', path: '/counsellor', icon: Mic, label: 'Voice Counsellor', sublabel: 'Instant Advisory', color: 'var(--saffron)' },
+  { id: 'decoder', path: '/decoder', icon: Zap, label: 'Document Audit', sublabel: 'Clause Risk Scanning', color: 'var(--indigo)' },
+  { id: 'generator', path: '/generator', icon: FileText, label: 'Contract Forge', sublabel: 'Legal Drafting Studio', color: 'var(--emerald)' },
+  { id: 'tracker', path: '/tracker', icon: Target, label: 'Docket Control', sublabel: 'Live Case Intelligence', color: 'var(--gold)' },
+  { id: 'score', path: '/score', icon: Activity, label: 'NyayaScore', sublabel: 'Legal Health Matrix', color: 'var(--saffron)' },
+  { id: 'amendments', path: '/amendments', icon: History, label: 'Gazette Ledger', sublabel: 'Statutory Transitions', color: 'var(--indigo)' },
+  { id: 'negotiate', path: '/negotiate', icon: MessageSquare, label: 'Sparring Coach', sublabel: 'Conflict Simulation', color: 'var(--emerald)' },
 ]
-
-const STATS = [
-  { value: '35+', label: 'AI Tools', icon: Zap, color: '#ff9933' },
-  { value: '47+', label: 'Templates', icon: FileText, color: '#06b6d4' },
-  { value: '1.4B', label: 'Citizens', icon: Scale, color: '#7c3aed' },
-  { value: '22', label: 'Languages', icon: Star, color: '#10b981' },
-]
-
-const TICKER_ITEMS = [
-  "⚖️ BNS v3.0 Deployment: Digital evidence protocols now live across 12 states.",
-  "⚖️ Supreme Court Ruling: Privacy rights in digital transactions reaffirmed.",
-  "⚖️ Gazette Alert: New Consumer Protection (E-commerce) Rules enforced Jan 2025.",
-  "⚖️ Cyber Law: Mandatory 24h breach reporting for financial entities.",
-]
-
-const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } } } as const
-const item = { hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } } } as const
-
-// ── Interactive Tilt Card Component ──────────────────────────
-function TiltCard({ children, className, style }: { children: React.ReactNode, className?: string, style?: any }) {
-  const x = useMotionValue(0)
-  const y = useMotionValue(0)
-
-  const mouseXSpring = useSpring(x)
-  const mouseYSpring = useSpring(y)
-
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["10deg", "-10deg"])
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-10deg", "10deg"])
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect()
-    const width = rect.width
-    const height = rect.height
-    const mouseX = e.clientX - rect.left
-    const mouseY = e.clientY - rect.top
-    const xPct = mouseX / width - 0.5
-    const yPct = mouseY / height - 0.5
-    x.set(xPct)
-    y.set(yPct)
-  }
-
-  const handleMouseLeave = () => {
-    x.set(0)
-    y.set(0)
-  }
-
-  return (
-    <motion.div
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{ rotateX, rotateY, transformStyle: "preserve-3d", ...style }}
-      className={cn("perspective-1000", className)}
-    >
-      <div style={{ transform: "translateZ(40px)" }} className="h-full">{children}</div>
-    </motion.div>
-  )
-}
 
 export default function HomePage() {
   const navigate = useNavigate()
   const { language, nyayaScore, user } = useAppStore()
-  const lang = LANGUAGES[language]
   const latestAmendment = SAMPLE_AMENDMENTS[0]
   const activeCase = SAMPLE_CASES[0]
-  const [tickerIndex, setTickerIndex] = useState(0)
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTickerIndex((prev) => (prev + 1) % TICKER_ITEMS.length)
-    }, 5000)
-    return () => clearInterval(timer)
-  }, [])
 
   return (
-    <motion.div variants={container} initial="hidden" animate="show"
-      className="px-6 lg:px-12 py-6 lg:py-10 space-y-8 lg:space-y-12 max-w-7xl mx-auto w-full min-h-screen font-sans selection:bg-saffron/20"
-    >
-      {/* Dynamic News Ticker */}
-      <motion.div variants={item} className="w-full h-10 rounded-[1.25rem] bg-orange-500/5 backdrop-blur-xl border border-orange-500/20 flex items-center px-6 gap-4 overflow-hidden shadow-2xl">
-        <div className="flex items-center gap-2 shrink-0 border-r border-white/5 pr-4 mr-2">
-          <div className="w-2 h-2 rounded-full bg-saffron animate-ping opacity-75" />
-          <span className="text-[10px] font-black text-saffron uppercase tracking-[0.25em]">Gazette Live</span>
-        </div>
-        <AnimatePresence mode="wait">
-          <motion.p
-            key={tickerIndex}
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -20, opacity: 0 }}
-            className="text-[11px] lg:text-sm text-slate-300 font-bold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis"
-          >
-            {TICKER_ITEMS[tickerIndex]}
-          </motion.p>
-        </AnimatePresence>
-      </motion.div>
-
-      {/* Hero Welcome Section */}
-      <div className="flex flex-col lg:flex-row lg:items-center gap-10 lg:gap-20">
-        <motion.div variants={item} className="flex-1 space-y-6">
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-               <div className="px-3 py-1 rounded-md bg-white/5 border border-white/10 text-[10px] font-black text-slate-500 uppercase tracking-widest">Digital Citizen ID: 0047</div>
-               <div className="flex -space-x-2">
-                 {[1,2,3].map(i => <div key={i} className="w-6 h-6 rounded-full border-2 border-[#030712] bg-slate-800" />)}
-                 <div className="w-6 h-6 rounded-full border-2 border-[#030712] bg-saffron flex items-center justify-center text-[10px] font-bold">+12</div>
-               </div>
-            </div>
-            <h1 className="text-5xl lg:text-7xl font-black text-white leading-[0.95] tracking-tighter font-display">
-              Namaste, <span className="text-gradient-saffron text-glow-saffron">{user?.name?.split(' ')[0] || 'Citizen'}</span> <br />
-              <div className="text-2xl lg:text-4xl text-slate-400 mt-4 font-bold tracking-tight">Your Legal Pulse is <span className="text-india-green">Healthy.</span></div>
-            </h1>
-          </div>
-          <div className="flex flex-wrap gap-4 mt-6">
-             <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white/2 border border-white/5 backdrop-blur-3xl group cursor-help hover:bg-white/5 transition-all">
-                <Shield size={18} className="text-india-green" />
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">DPDP Compliant Data</span>
-             </div>
-             <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white/2 border border-white/10 backdrop-blur-3xl group cursor-help hover:bg-white/5 transition-all">
-                <div className="w-4 h-4 rounded-full bg-saffron/20 border border-saffron/40 flex items-center justify-center text-[8px] text-saffron font-bold">A</div>
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Government Safe Stack</span>
-             </div>
-          </div>
-        </motion.div>
-
-        {/* Global Voice Command Button */}
-        <motion.div variants={item} className="lg:w-[500px] shrink-0">
-          <button
-            onClick={() => navigate('/counsellor')}
-            className="w-full relative group transition-all active:scale-95"
-          >
-            <div className="absolute -inset-2 bg-gradient-to-r from-saffron to-amber-600 rounded-[3rem] blur-2xl opacity-20 group-hover:opacity-60 transition duration-500" />
-            <div className="relative h-28 lg:h-36 px-10 rounded-[3rem] bg-gradient-to-r from-saffron to-amber-600 flex items-center justify-between shadow-[0_20px_60px_rgba(255,153,51,0.4)] overflow-hidden">
-               <div className="absolute inset-x-0 bottom-0 h-1 bg-white/20" />
-               <div className="flex items-center gap-6 lg:gap-10">
-                  <div className="w-16 h-16 lg:w-24 lg:h-24 rounded-3xl bg-white/20 flex items-center justify-center relative shadow-inner">
-                     <div className="absolute inset-0 mic-ring rounded-3xl bg-white/40" />
-                     <Mic size={32} className="text-white relative z-10 drop-shadow-lg" />
-                  </div>
-                  <div className="text-left">
-                     <div className="text-white font-black text-xl lg:text-3xl tracking-tighter leading-tight font-display">Start Neural Counsel</div>
-                     <p className="text-white/80 text-[10px] lg:text-sm font-black uppercase tracking-[0.1em] mt-1 lg:mt-2">Instant Legal Dialogue in 6 Languages</p>
-                  </div>
-               </div>
-               <div className="w-12 h-12 rounded-full flex items-center justify-center bg-black/10 group-hover:bg-white/10 transition-colors">
-                  <ArrowRight size={24} className="text-white transition-transform group-hover:translate-x-1" />
-               </div>
-            </div>
-          </button>
-        </motion.div>
+    <div className="min-h-screen bg-[#030712] text-white flex flex-col font-display selection:bg-saffron/30">
+      
+      {/* 🌌 Background Ambiance */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-saffron/5 blur-[200px] rounded-full" />
+        <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-indigo/5 blur-[150px] rounded-full" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14">
-        
-        {/* Main Dashboard Panel */}
-        <div className="lg:col-span-8 space-y-10 lg:space-y-16">
-          
-          {/* Performance Index Grid */}
-          <motion.div variants={item} className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-            {STATS.map(({ value, label, icon: Icon, color }) => (
-              <div key={label} className="p-6 lg:p-8 rounded-[2.5rem] bg-slate-900/40 border border-white/5 backdrop-blur-3xl relative overflow-hidden group hover:border-white/10 transition-all hover-lift">
-                 <div className="absolute -bottom-10 -right-10 w-24 h-24 rounded-full blur-[40px] opacity-10 group-hover:opacity-30 transition-opacity" style={{ backgroundColor: color }} />
-                 <div className="flex items-center justify-between mb-4 lg:mb-6">
-                    <Icon size={20} style={{ color }} className="font-black" />
-                    <Sparkles size={12} className="text-slate-700" />
-                 </div>
-                 <div className="text-3xl lg:text-5xl font-black tracking-tighter text-white font-display mb-1">{value}</div>
-                 <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{label}</div>
+      <header className="fixed top-0 left-0 right-0 z-50 glass-nav border-b border-white/5">
+        <div className="container mx-auto px-6 h-20 flex items-center justify-between">
+           <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-xl gradient-saffron flex items-center justify-center shadow-lg shadow-saffron/20 border-glow">
+                 <Scale size={20} className="text-white" />
               </div>
-            ))}
-          </motion.div>
+              <h1 className="text-xl font-black italic uppercase tracking-tighter font-display">NyayaMitra<span className="text-saffron">.</span></h1>
+           </div>
+           <div className="flex items-center gap-5">
+              <div className="hidden lg:flex items-center gap-3 px-4 py-1.5 rounded-full bg-emerald/10 border border-emerald/20">
+                 <div className="w-1.5 h-1.5 rounded-full bg-emerald animate-pulse" />
+                 <span className="text-[9px] font-black uppercase tracking-widest text-emerald">Legal Lattice Online</span>
+              </div>
+              <button className="w-10 h-10 rounded-full glass-card border border-white/10 flex items-center justify-center">
+                 <Bell size={18} className="text-slate-500" />
+              </button>
+              <div className="w-10 h-10 rounded-full border border-white/10 overflow-hidden bg-white/5">
+                 <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=transparent" alt="Profile" className="w-full h-full p-1 opacity-60" />
+              </div>
+           </div>
+        </div>
+      </header>
 
-          {/* Capability Matrix */}
-          <motion.div variants={item}>
-            <div className="flex items-center justify-between mb-8 lg:mb-12">
-               <div className="space-y-1">
-                  <h2 className="text-4xl font-black text-white tracking-tighter font-display leading-none">Capability Matrix</h2>
-                  <p className="text-slate-500 font-bold uppercase text-[10px] tracking-widest">Advanced Neural Legal Infrastructure</p>
+      <main className="flex-1 container mx-auto px-6 max-w-7xl pt-32 pb-40">
+        
+        {/* Welcome Section */}
+        <section className="mb-20">
+           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+              <h2 className="text-5xl lg:text-8xl font-black italic uppercase tracking-tighter font-display leading-[0.8] mb-6">
+                Namaste, <span className="text-gradient-saffron">{user?.name?.split(' ')[0] || 'Citizen'}</span>
+              </h2>
+              <p className="text-slate-500 text-lg lg:text-2xl font-medium italic opacity-70 max-w-2xl leading-tight">
+                 Your legal command center is synchronized. Current protection status: <span className="text-white font-black">HIGH INTEGRITY.</span>
+              </p>
+           </motion.div>
+        </section>
+
+        <div className="grid lg:grid-cols-12 gap-12">
+          
+          {/* Main Dashboard */}
+          <div className="lg:col-span-8 space-y-20">
+            
+            {/* NyayaScore High-Impact Card */}
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}>
+               <button 
+                onClick={() => navigate('/score')}
+                className="w-full glass-card p-12 rounded-[4rem] text-left relative overflow-hidden group border-glow"
+               >
+                  <div className="absolute top-0 right-0 p-20 opacity-5 pointer-events-none group-hover:scale-110 transition-transform">
+                     <Radar size={240} className="text-indigo" />
+                  </div>
+                  <div className="flex flex-col md:flex-row items-center gap-12 relative z-10">
+                     <div className="w-48 h-48 rounded-[3.5rem] bg-black/40 border border-white/10 flex flex-col items-center justify-center relative shadow-inner overflow-hidden">
+                        <div className="absolute inset-0 bg-indigo/10 animate-pulse" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Grade Index</span>
+                        <div className="text-7xl font-black italic tracking-tighter text-white font-display leading-none">{nyayaScore || 72}</div>
+                        <div className="mt-4 px-3 py-1 rounded-lg bg-indigo/20 border border-indigo/40 text-indigo text-[9px] font-black uppercase tracking-widest leading-none">Safe</div>
+                     </div>
+                     <div className="space-y-4 flex-1">
+                        <div className="flex items-center gap-3">
+                           <Activity size={16} className="text-saffron" />
+                           <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest leading-none">Neural Vitality Matrix</span>
+                        </div>
+                        <h3 className="text-4xl lg:text-5xl font-black italic uppercase tracking-tighter font-display text-white">NyayaScore Profile</h3>
+                        <p className="text-slate-400 text-lg font-medium italic opacity-70 max-w-md leading-snug">
+                           Your legal footprint is currently optimized. Periodic audits maintain your immunity scores.
+                        </p>
+                        <div className="flex items-center gap-3 text-saffron font-black text-sm uppercase tracking-widest mt-8 group-hover:gap-5 transition-all">
+                           Initialize Detailed Audit <ArrowRight size={18} />
+                        </div>
+                     </div>
+                  </div>
+               </button>
+            </motion.div>
+
+            {/* Neural Lattice (Pillars Grid) */}
+            <div className="space-y-10">
+               <div className="flex items-center gap-6 px-4">
+                  <LayoutGrid size={24} className="text-slate-700" />
+                  <h3 className="text-3xl font-black italic uppercase tracking-tighter font-display text-white">The Neural Lattice</h3>
+                  <div className="h-px bg-white/5 flex-1" />
                </div>
-               <button className="p-3 rounded-2xl bg-white/5 border border-white/10 text-slate-400 hover:text-white transition-colors">
-                  <LayoutGrid size={20} />
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {PILLARS.filter(p => !['score'].includes(p.id)).map((p, i) => (
+                    <motion.button 
+                      key={p.id}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: i * 0.05 }}
+                      onClick={() => navigate(p.path)}
+                      className="glass-card p-10 rounded-[3rem] text-left border-glow group hover:bg-white/2 transition-all relative overflow-hidden"
+                    >
+                       <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.1] transition-all transform scale-150 rotate-12 pointer-events-none">
+                          <p.icon size={80} style={{ color: p.color }} />
+                       </div>
+                       <div className="w-16 h-16 rounded-[1.75rem] flex items-center justify-center mb-8 border transition-all group-hover:scale-110 shadow-2xl" 
+                         style={{ background: `${p.color}10`, borderColor: `${p.color}20`, color: p.color }}>
+                          <p.icon size={32} />
+                       </div>
+                       <div>
+                          <h4 className="text-2xl font-black italic uppercase tracking-tighter font-display text-white mb-2">{p.label}</h4>
+                          <p className="text-slate-500 font-medium italic text-sm">{p.sublabel}</p>
+                       </div>
+                       <div className="mt-8 flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-slate-700 opacity-0 group-hover:opacity-100 transition-all">
+                          Link Established <ArrowRight size={12} />
+                       </div>
+                    </motion.button>
+                  ))}
+               </div>
+            </div>
+          </div>
+
+          {/* Intel & SOS Panel */}
+          <div className="lg:col-span-4 space-y-12">
+            
+            {/* Live Case Card */}
+            <div className="space-y-6">
+               <h4 className="text-[10px] font-black text-slate-700 uppercase tracking-widest px-4">Live Mission Status</h4>
+               <div className="p-10 rounded-[3rem] glass-card border-l-4 border-l-indigo relative overflow-hidden group border-glow">
+                  <div className="absolute top-0 right-0 p-8 opacity-5">
+                     <Gavel size={64} className="text-indigo" />
+                  </div>
+                  <div className="relative z-10 space-y-6">
+                     <div className="flex items-center gap-3">
+                        <div className="w-2 h-2 rounded-full bg-emerald shadow-[0_0_8px_var(--emerald)] animate-pulse" />
+                        <span className="text-[9px] font-black uppercase tracking-widest text-emerald">Tracking Active</span>
+                     </div>
+                     <div>
+                        <h5 className="text-2xl font-black italic uppercase tracking-tighter font-display mb-1">{activeCase.title}</h5>
+                        <p className="text-[10px] text-slate-600 font-black uppercase tracking-widest">CNR: {activeCase.cnrNumber || 'MH-PN-0021'}</p>
+                     </div>
+                     <div className="flex items-center gap-4 pt-4 border-t border-white/5">
+                        <div className="px-3 py-1 rounded bg-indigo/10 border border-indigo/20 text-indigo text-[9px] font-black uppercase tracking-widest">Next Hearing</div>
+                        <span className="text-sm font-black italic text-white uppercase tracking-widest">{formatDate(activeCase.limitationDate || new Date())}</span>
+                     </div>
+                  </div>
+               </div>
+            </div>
+
+            {/* Gazette Alert Card */}
+            <div className="space-y-6">
+               <h4 className="text-[10px] font-black text-slate-700 uppercase tracking-widest px-4">Gazette Surveillance</h4>
+               <button onClick={() => navigate('/amendments')} className="w-full p-8 rounded-[2.5rem] bg-indigo/5 border border-indigo/20 text-left group hover:bg-indigo/10 transition-all border-glow">
+                  <div className="text-[9px] font-black text-indigo uppercase tracking-widest mb-4">Latest Statutory Move</div>
+                  <h6 className="font-black italic uppercase tracking-tighter font-display text-lg mb-2 text-white">{latestAmendment.actName}</h6>
+                  <p className="text-xs text-slate-500 italic line-clamp-2 mb-4 leading-relaxed opacity-70">"{latestAmendment.diffSummary}"</p>
+                  <div className="flex items-center gap-2 text-[9px] font-black text-indigo uppercase tracking-widest">
+                     Uplink Ledger <ArrowUpRight size={14} />
+                  </div>
                </button>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
-              {QUICK_ACTIONS.map(({ id, path, icon: Icon, label, sublabel, color, glow, bg }) => (
-                <TiltCard key={id} className="relative group cursor-pointer">
-                  <button onClick={() => navigate(path)}
-                    className="w-full text-left p-10 rounded-[4rem] bg-slate-900/10 border border-white/5 hover:border-white/20 backdrop-blur-3xl flex flex-col gap-8 transition-all duration-500 relative overflow-hidden h-full"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent pointer-events-none" />
-                    <div className="w-16 h-16 rounded-3xl flex items-center justify-center transition-all group-hover:scale-110 shadow-2xl relative z-10"
-                      style={{ background: `${color}15`, border: `1px solid ${color}40`, boxShadow: `0 10px 40px -10px ${glow}` }}>
-                      <Icon size={28} style={{ color }} className="font-black" />
-                    </div>
-                    <div>
-                      <div className="text-white text-xl lg:text-3xl font-black tracking-tighter leading-tight font-display">{label}</div>
-                      <p className="text-slate-500 text-[12px] lg:text-sm font-bold tracking-tight mt-2 opacity-80 leading-snug">{sublabel}</p>
-                    </div>
-                  </button>
-                </TiltCard>
-              ))}
-            </div>
-          </motion.div>
 
-          {/* AI Score Index Section */}
-          <motion.div variants={item}>
-            <button
-               onClick={() => navigate('/score')}
-               className="w-full p-10 lg:p-20 rounded-[4rem] bg-slate-900/30 border border-white/10 backdrop-blur-3xl text-left group overflow-hidden relative"
-            >
-               <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-accent-purple/5 blur-[100px] rounded-full pointer-events-none" />
-               <div className="flex flex-col lg:flex-row lg:items-center gap-14 lg:gap-24 relative z-10">
-                  <div className="relative shrink-0 mx-auto">
-                     <div className="absolute inset-0 blur-[50px] bg-accent-purple/20 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-                     <svg width="200" height="200" viewBox="0 0 100 100" className="lg:w-64 lg:h-64 filter drop-shadow-[0_0_20px_rgba(124,58,237,0.3)]">
-                        <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="4" />
-                        <motion.circle 
-                          cx="50" cy="50" r="44" fill="none" stroke="url(#hpGrad)" strokeWidth="6"
-                          strokeDasharray="276.4"
-                          initial={{ strokeDashoffset: 276.4 }}
-                          animate={{ strokeDashoffset: 276.4 - (276.4 * (nyayaScore || 74) / 100) }}
-                          transition={{ duration: 2, delay: 0.5, ease: "easeOut" }}
-                          strokeLinecap="round"
-                          style={{ transform: 'rotate(-90deg)', transformOrigin: 'center' }}
-                        />
-                        <defs>
-                          <linearGradient id="hpGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#7c3aed" />
-                            <stop offset="100%" stopColor="#06b6d4" />
-                          </linearGradient>
-                        </defs>
-                        <text x="50" y="58" textAnchor="middle" fontSize="24" fontWeight="900" fill="white" className="font-display">{nyayaScore || 74}</text>
-                     </svg>
+            {/* SOS Grid */}
+            <div className="p-10 rounded-[3.5rem] glass-card border-red-500/10 space-y-8 border-glow relative overflow-hidden">
+               <div className="absolute inset-0 bg-red-500/2" />
+               <div className="flex items-center gap-4 relative z-10">
+                  <div className="w-10 h-10 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 shadow-xl">
+                     <Phone size={20} />
                   </div>
-                  <div className="flex-1 space-y-8">
-                     <div className="flex items-center gap-3">
-                        <div className="px-3 py-1 bg-accent-purple/10 border border-accent-purple/20 rounded-md text-[10px] font-black text-accent-purple uppercase tracking-[0.2em]">NyayaScore™ Profile</div>
-                        <div className="h-px flex-1 bg-white/5" />
-                     </div>
-                     <h3 className="text-5xl font-black text-white tracking-tighter font-display leading-[0.9]">Legal Protection Quotient</h3>
-                     <p className="text-xl text-slate-400 font-medium leading-relaxed max-w-xl">Deep neural audit of your legal readiness. Your footprint is 14% more secure than the state average.</p>
-                     
-                     <div className="grid grid-cols-2 gap-8 pt-4">
-                        {[
-                          { label: "Contract Safety", pct: 85, color: "#10b981" },
-                          { label: "Awareness", pct: 60, color: "#f59e0b" }
-                        ].map(stat => (
-                          <div key={stat.label} className="space-y-4">
-                             <div className="flex justify-between items-center text-[11px] font-black uppercase tracking-widest text-slate-500">
-                                <span>{stat.label}</span>
-                                <span style={{ color: stat.color }}>{stat.pct}%</span>
-                             </div>
-                             <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
-                                <motion.div 
-                                  initial={{ width: 0 }} 
-                                  whileInView={{ width: `${stat.pct}%` }} 
-                                  className="h-full rounded-full" 
-                                  style={{ backgroundColor: stat.color, boxShadow: `0 0 10px ${stat.color}40` }} 
-                                />
-                             </div>
-                          </div>
-                        ))}
-                     </div>
+                  <div>
+                    <h5 className="text-[10px] font-black text-red-500 uppercase tracking-widest leading-none mb-1">Defense SOS</h5>
+                    <p className="text-[8px] font-black text-slate-700 uppercase tracking-[0.2em]">Verified BNS Protocols</p>
                   </div>
                </div>
-            </button>
-          </motion.div>
+               <div className="grid grid-cols-2 gap-4 relative z-10">
+                 {[
+                   { l: 'Women', n: '181' },
+                   { l: 'Police', n: '100' },
+                   { l: 'Legal', n: '1551' },
+                   { l: 'BNS', n: '112' }
+                 ].map(sos => (
+                   <a key={sos.l} href={`tel:${sos.n}`} className="p-4 rounded-2xl bg-black/40 border border-white/5 text-center group hover:border-red-500/40 transition-all active:scale-95">
+                     <div className="text-[8px] text-slate-700 font-black uppercase tracking-widest mb-1 opacity-50 group-hover:opacity-100">{sos.l}</div>
+                     <div className="text-xl font-black text-white italic font-display">{sos.n}</div>
+                   </a>
+                 ))}
+               </div>
+            </div>
 
+            {/* Session Actions */}
+            <div className="space-y-4">
+               <button 
+                onClick={() => { localStorage.clear(); navigate('/') }}
+                className="w-full py-5 rounded-[2rem] bg-white/2 border border-white/5 text-slate-700 hover:text-red-500 hover:bg-red-500/5 transition-all text-[9px] font-black uppercase tracking-[0.3em] italic flex items-center justify-center gap-3"
+               >
+                  <ShieldCheck size={14} />
+                  Terminate Neural Session
+               </button>
+            </div>
+
+          </div>
         </div>
-
-        {/* Intelligence Side Column */}
-        <div className="lg:col-span-4 space-y-10 lg:space-y-14">
-          
-          {/* Gazette Intelligence */}
-          <motion.div variants={item}>
-             <div className="flex items-center gap-2 mb-6">
-                <TrendingUp size={20} className="text-india-green" />
-                <h2 className="text-white font-black text-xl tracking-tighter uppercase font-display">Neural Gazette</h2>
-             </div>
-             <button
-               onClick={() => navigate('/amendments')}
-               className="w-full text-left p-8 rounded-[3rem] bg-slate-900/40 border border-white/5 backdrop-blur-3xl group hover:border-india-green/20 hover:scale-[1.02] transition-all relative overflow-hidden"
-             >
-                <div className="absolute inset-0 bg-india-green/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="relative z-10 space-y-6">
-                   <div className="flex items-center gap-3">
-                      <div className="px-2 py-1 rounded-md bg-india-green/10 text-[9px] font-black text-india-green border border-india-green/20 uppercase tracking-widest">Live Deployment</div>
-                      <div className="text-[10px] text-slate-500 font-black tracking-tight">{formatDate(latestAmendment.gazetteDate)}</div>
-                   </div>
-                   <h3 className="text-2xl font-black text-white tracking-tighter font-display leading-tight">{latestAmendment.actName}</h3>
-                   <p className="text-[13px] text-slate-400 font-medium leading-relaxed italic line-clamp-3">"{latestAmendment.diffSummary}"</p>
-                   <div className="flex items-center gap-3 text-india-green font-black text-[10px] uppercase tracking-widest">
-                      AI Reasoning Complete <ChevronRight size={14} />
-                   </div>
-                </div>
-             </button>
-          </motion.div>
-
-          {/* Active Docket Summary */}
-          <motion.div variants={item}>
-             <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-2">
-                   <LayoutGrid size={20} className="text-accent-cyan" />
-                   <h2 className="text-white font-black text-xl tracking-tighter uppercase font-display">Live Docket</h2>
-                </div>
-                <button onClick={() => navigate('/cases')} className="text-accent-cyan text-[10px] font-black uppercase tracking-widest hover:underline">Full Docket →</button>
-             </div>
-             <button
-               onClick={() => navigate('/cases')}
-               className="w-full text-left p-8 rounded-[3rem] bg-slate-900/40 border border-white/5 backdrop-blur-3xl group hover:border-accent-cyan/20 hover:scale-[1.02] transition-all relative overflow-hidden"
-             >
-                <div className="absolute inset-0 bg-accent-cyan/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="relative z-10 space-y-6">
-                   <div className="flex items-center justify-between">
-                      <div className="w-12 h-12 rounded-2xl bg-accent-cyan/10 flex items-center justify-center text-accent-cyan">
-                         <Shield size={24} />
-                      </div>
-                      <div className="text-right">
-                         <div className="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1">Win Probability</div>
-                         <div className="text-2xl font-black text-accent-cyan font-display">74.2%</div>
-                      </div>
-                   </div>
-                   <div>
-                      <h4 className="text-xl font-black text-white tracking-tight line-clamp-1">{activeCase.title}</h4>
-                      <p className="text-[11px] text-slate-500 font-bold uppercase mt-1">Status: Automated Tracking Active</p>
-                   </div>
-                   <div className="p-5 rounded-3xl bg-[#030712]/60 border border-white/5 flex items-center justify-between">
-                      <div className="space-y-1">
-                         <div className="text-[8px] text-slate-600 font-black uppercase tracking-widest">Hearing Countdown</div>
-                         <div className="text-white font-black text-xl tabular-nums">{daysUntil(activeCase.limitationDate || new Date())} Days</div>
-                      </div>
-                      <div className="w-10 h-10 rounded-full border-2 border-accent-cyan/20 flex items-center justify-center p-1 relative">
-                         <div className="w-full h-full rounded-full bg-accent-cyan/10 animate-pulse" />
-                         <Clock size={14} className="text-accent-cyan absolute" />
-                      </div>
-                   </div>
-                </div>
-             </button>
-          </motion.div>
-
-          {/* Emergency SOS Center */}
-          <motion.div variants={item} className="p-10 rounded-[4rem] bg-red-500/5 border border-red-500/10 space-y-10">
-             <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-red-500/20 flex items-center justify-center shadow-xl">
-                   <Phone size={24} className="text-red-500 animate-pulse" />
-                </div>
-                <div>
-                   <h5 className="text-red-500 font-black text-lg tracking-tighter uppercase font-display leading-none">Neural SOS</h5>
-                   <p className="text-red-900/40 text-[9px] font-black uppercase tracking-widest">Authenticated Bharat Helplines</p>
-                </div>
-             </div>
-             <div className="grid grid-cols-2 gap-4">
-               {[
-                 { label: 'Women', number: '181', color: '#ec4899' },
-                 { label: 'Police', number: '100', color: '#ef4444' },
-                 { label: 'Legal Aid', number: '1551', color: '#f59e0b' },
-                 { label: 'Distress', number: '988', color: '#10b981' },
-               ].map(sos => (
-                 <a key={sos.label} href={`tel:${sos.number}`} className="p-5 rounded-[2.5rem] bg-slate-950/40 border border-white/5 flex flex-col items-center gap-3 group hover:border-red-500/20 transition-all active:scale-90">
-                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-white/5 transition-transform group-hover:scale-110" style={{ color: sos.color }}>
-                       <Phone size={20} />
-                    </div>
-                    <div className="text-center">
-                       <div className="text-[10px] text-slate-600 font-black uppercase tracking-tighter mb-1">{sos.label}</div>
-                       <div className="text-lg font-black text-white tabular-nums tracking-tighter">{sos.number}</div>
-                    </div>
-                 </a>
-               ))}
-             </div>
-          </motion.div>
-
-          {/* Platform Exit Terminal */}
-          <motion.div variants={item}>
-             <button
-               onClick={() => { localStorage.clear(); window.location.href = '/' }}
-               className="w-full p-6 rounded-[2.5rem] bg-white/2 border border-white/5 text-slate-700 hover:text-red-500 hover:bg-red-500/5 transition-all text-[11px] font-black uppercase tracking-[0.4em] italic flex items-center justify-center gap-4"
-             >
-                <Shield size={16} />
-                Secure Terminal Logoff
-             </button>
-          </motion.div>
-
-        </div>
-      </div>
-    </motion.div>
+      </main>
+    </div>
   )
 }
